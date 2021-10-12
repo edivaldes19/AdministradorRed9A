@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1027153069534",
+    "project_id": "redes-3f06a",
+    "storage_bucket": "redes-3f06a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1027153069534:android:7d4896c28de48953c7c94f",
+        "android_client_info": {
+          "package_name": "com.manuel.administradorred"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1027153069534-uqa8sktugd235gcnrve9m00sfd0l2kf5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCN5878wdDcpSZZI9U0gQ7KDyojoAyztq4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1027153069534-uqa8sktugd235gcnrve9m00sfd0l2kf5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

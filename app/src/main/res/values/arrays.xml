@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="status_key">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </integer-array>
+    <string-array name="status_value">
+        <item>@string/contract_status_on_hold</item>
+        <item>@string/contract_status_activated</item>
+        <item>@string/contract_status_timed_out</item>
+    </string-array>
+</resources>

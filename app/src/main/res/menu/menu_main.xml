@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_contract_history"
+        android:icon="@drawable/ic_history_contracts"
+        android:title=""
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_promo"
+        android:title="@string/offers_and_promotions"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_sign_out"
+        android:title="@string/sign_off"
+        app:showAsAction="never" />
+</menu>
