@@ -17,7 +17,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
-import com.manuel.administradorred.contract.ContractAux
+import com.manuel.administradorred.requested_contract.RequestedContractAux
 import com.manuel.administradorred.databinding.FragmentChatBinding
 import com.manuel.administradorred.entities.Contract
 import com.manuel.administradorred.entities.Message
@@ -93,7 +93,7 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     private fun getContract() {
-        contract = (activity as? ContractAux)?.getContractSelected()
+        contract = (activity as? RequestedContractAux)?.getContractSelected()
         contract?.let {
             setupActionBar()
             setupRealtimeDatabase()

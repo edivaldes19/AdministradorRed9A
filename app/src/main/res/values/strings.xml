@@ -12,7 +12,7 @@
     <string name="update_package">Actualizar paquete</string>
     <string name="are_you_sure_to_take_this_action">¿Está seguro de realizar esta acción?</string>
     <string name="cancel">Cancelar</string>
-    <string name="add_more_images">Añadir más imágenes</string>
+    <string name="add_more_images">Agregar más imágenes</string>
     <string name="name">Nombre</string>
     <string name="description">Descripción</string>
     <string name="price">Precio</string>
@@ -27,7 +27,6 @@
     <string name="failed_to_update_package">Error al actualizar el paquete.</string>
     <string name="write_a_message">Escribe un mensaje…</string>
     <string name="technical_support">Soporte técnico</string>
-    <string name="my_contracts">Mis contratos</string>
     <string name="error_loading_chat_messages">Error al cargar los mensajes del chat.</string>
     <string name="error_clearing_message">Error al eliminar el mensaje.</string>
     <string name="message_deleted">Mensaje borrado exitosamente.</string>
@@ -57,10 +56,11 @@
     <string name="there_is_no_internet_conection">No hay conexión a internet.</string>
     <string name="you_have_logged_out">Has cerrado sesión.</string>
     <string name="of">de</string>
-    <string name="image">imagen_</string>
     <string name="title">Título</string>
     <string name="topic">Tema/Tópico</string>
     <string name="new_promotion">Nueva promoción</string>
     <string name="promotion_sent_to_all_users">Promoción enviada a todos los usuarios.</string>
     <string name="failed_to_send_the_promotion">Error al enviar la promoción.</string>
+    <string name="contract_requests">Solicitudes de contratos</string>
+    <string name="network_error">Error de red, verifique su conexion.</string>
 </resources>

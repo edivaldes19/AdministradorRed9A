@@ -1,4 +1,4 @@
-package com.manuel.administradorred.contract
+package com.manuel.administradorred.requested_contract
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -10,11 +10,11 @@ import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.ItemContractBinding
 import com.manuel.administradorred.entities.Contract
 
-class ContractAdapter(
+class RequestedContractAdapter(
     private val contractList: MutableList<Contract>,
-    private val listener: OnContractListener
+    private val listenerRequested: OnRequestedContractListener
 ) :
-    RecyclerView.Adapter<ContractAdapter.ViewHolder>() {
+    RecyclerView.Adapter<RequestedContractAdapter.ViewHolder>() {
     private lateinit var context: Context
     private val aValues: Array<String> by lazy {
         context.resources.getStringArray(R.array.status_value)
@@ -25,7 +25,7 @@ class ContractAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        val view = LayoutInflater.from(context).inflate(R.layout.item_contract, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_requested_contract, parent, false)
         return ViewHolder(view)
     }
 
@@ -62,10 +62,10 @@ class ContractAdapter(
         fun setListener(contract: Contract) {
             binding.actvStatus.setOnItemClickListener { _, _, position, _ ->
                 contract.status = aKeys[position]
-                listener.onStatusChange(contract)
+                listenerRequested.onStatusChange(contract)
             }
             binding.chpChat.setOnClickListener {
-                listener.onStartChat(contract)
+                listenerRequested.onStartChat(contract)
             }
         }
     }

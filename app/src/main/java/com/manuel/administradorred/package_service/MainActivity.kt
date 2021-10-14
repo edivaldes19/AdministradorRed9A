@@ -31,17 +31,17 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.manuel.administradorred.R
 import com.manuel.administradorred.add.AddDialogFragment
-import com.manuel.administradorred.contract.ContractActivity
 import com.manuel.administradorred.databinding.ActivityMainBinding
 import com.manuel.administradorred.entities.PackageService
-import com.manuel.administradorred.promo.PromoFragment
+import com.manuel.administradorred.offers_and_promotions.OffersAndPromotionsFragment
+import com.manuel.administradorred.requested_contract.RequestedRequestedRequestedContractActivity
 import com.manuel.administradorred.utils.Constants
 
 class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
     private lateinit var binding: ActivityMainBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
-    private lateinit var adapter: PackageServiceAdapter
+    private lateinit var packageServiceAdapter: PackageServiceAdapter
     private lateinit var firestormListener: ListenerRegistration
     private var packageServiceSelected: PackageService? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -173,11 +173,14 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
             R.id.action_contract_history -> startActivity(
                 Intent(
                     this,
-                    ContractActivity::class.java
+                    RequestedRequestedRequestedContractActivity::class.java
                 )
             )
             R.id.action_promo -> {
-                PromoFragment().show(supportFragmentManager, PromoFragment::class.java.simpleName)
+                OffersAndPromotionsFragment().show(
+                    supportFragmentManager,
+                    OffersAndPromotionsFragment::class.java.simpleName
+                )
             }
         }
         return super.onOptionsItemSelected(item)
@@ -192,19 +195,20 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
         val adapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_singlechoice)
         adapter.add(getString(R.string.delete))
         adapter.add(getString(R.string.add_more_images))
-        MaterialAlertDialogBuilder(this)
-            .setAdapter(adapter) { _: DialogInterface, position: Int ->
-                when (position) {
-                    0 -> confirmDeletePackageService(packageService)
-                    1 -> {
-                        packageServiceSelected = packageService
-                        val intent =
-                            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                        galleryResult.launch(intent)
-                    }
+        MaterialAlertDialogBuilder(this).setAdapter(adapter) { _: DialogInterface, position: Int ->
+            when (position) {
+                0 -> {
+                    confirmDeletePackageService(packageService)
                 }
-            }.show()
+                1 -> {
+                    packageServiceSelected = packageService
+                    val intent =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                    galleryResult.launch(intent)
+                }
+            }
+        }.show()
     }
 
     override fun getPackageSelected(): PackageService? = packageServiceSelected
@@ -217,7 +221,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
             }
             val packageServiceRef = FirebaseStorage.getInstance().reference.child(user.uid)
                 .child(Constants.PATH_PACKAGE_IMAGES).child(packageServiceSelected!!.id!!)
-                .child("${getString(R.string.image)}${position + 1}")
+                .child("image${position + 1}")
             packageServiceRef.putFile(uriList[position]).addOnSuccessListener {
                 if (position < count - 1) {
                     uploadImage(position + 1)
@@ -233,7 +237,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
                 progressSnack.apply {
                     setTextColor(Color.RED)
                     setText("${getString(R.string.image_upload_error)} ${position + 1}")
-                    duration = Snackbar.LENGTH_LONG
+                    duration = Snackbar.LENGTH_SHORT
                     show()
                 }
             }
@@ -262,11 +266,11 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
     }
 
     private fun configRecyclerView() {
-        adapter = PackageServiceAdapter(mutableListOf(), this)
+        packageServiceAdapter = PackageServiceAdapter(mutableListOf(), this)
         binding.recyclerView.apply {
             layoutManager =
                 GridLayoutManager(this@MainActivity, 2, GridLayoutManager.HORIZONTAL, false)
-            adapter = this@MainActivity.adapter
+            adapter = this@MainActivity.packageServiceAdapter
         }
     }
 
@@ -300,9 +304,15 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
                 val packageService = snapshot.document.toObject(PackageService::class.java)
                 packageService.id = snapshot.document.id
                 when (snapshot.type) {
-                    DocumentChange.Type.ADDED -> adapter.add(packageService)
-                    DocumentChange.Type.MODIFIED -> adapter.update(packageService)
-                    DocumentChange.Type.REMOVED -> adapter.delete(packageService)
+                    DocumentChange.Type.ADDED -> {
+                        packageServiceAdapter.add(packageService)
+                    }
+                    DocumentChange.Type.MODIFIED -> {
+                        packageServiceAdapter.update(packageService)
+                    }
+                    DocumentChange.Type.REMOVED -> {
+                        packageServiceAdapter.delete(packageService)
+                    }
                 }
             }
         }

@@ -1,4 +1,4 @@
-package com.manuel.administradorred.contract
+package com.manuel.administradorred.requested_contract
 
 import android.os.Bundle
 import android.widget.Toast
@@ -18,9 +18,9 @@ import com.manuel.administradorred.fcm.NotificationRS
 import com.manuel.administradorred.utils.Constants
 import java.util.*
 
-class ContractActivity : AppCompatActivity(), OnContractListener, ContractAux {
+class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnRequestedContractListener, RequestedContractAux {
     private lateinit var binding: ActivityContractBinding
-    private lateinit var adapter: ContractAdapter
+    private lateinit var adapterRequested: RequestedContractAdapter
     private lateinit var contractSelected: Contract
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val aValues: Array<String> by lazy {
@@ -63,8 +63,7 @@ class ContractActivity : AppCompatActivity(), OnContractListener, ContractAux {
                     param(FirebaseAnalytics.Param.SHIPPING, products.toTypedArray())
                     param(FirebaseAnalytics.Param.PRICE, contract.totalPrice)
                 }
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 Toast.makeText(
                     this,
                     getString(R.string.failed_to_update_contract),
@@ -74,12 +73,11 @@ class ContractActivity : AppCompatActivity(), OnContractListener, ContractAux {
     }
 
     override fun getContractSelected(): Contract = contractSelected
-
     private fun setupRecyclerView() {
-        adapter = ContractAdapter(mutableListOf(), this)
+        adapterRequested = RequestedContractAdapter(mutableListOf(), this)
         binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@ContractActivity)
-            adapter = this@ContractActivity.adapter
+            layoutManager = LinearLayoutManager(this@RequestedRequestedRequestedContractActivity)
+            adapter = this@RequestedRequestedRequestedContractActivity.adapterRequested
         }
     }
 
@@ -91,7 +89,7 @@ class ContractActivity : AppCompatActivity(), OnContractListener, ContractAux {
                 for (document in snapshot) {
                     val order = document.toObject(Contract::class.java)
                     order.id = document.id
-                    adapter.add(order)
+                    adapterRequested.add(order)
                 }
             }
             .addOnFailureListener {
@@ -134,8 +132,7 @@ class ContractActivity : AppCompatActivity(), OnContractListener, ContractAux {
                         }", names, tokensStr
                     )
                 }
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 Toast.makeText(
                     this,
                     getString(R.string.failed_to_query_the_data),

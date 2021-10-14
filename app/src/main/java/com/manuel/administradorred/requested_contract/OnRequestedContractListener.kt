@@ -1,8 +1,8 @@
-package com.manuel.administradorred.contract
+package com.manuel.administradorred.requested_contract
 
 import com.manuel.administradorred.entities.Contract
 
-interface OnContractListener {
+interface OnRequestedContractListener {
     fun onStartChat(contract: Contract)
     fun onStatusChange(contract: Contract)
 }

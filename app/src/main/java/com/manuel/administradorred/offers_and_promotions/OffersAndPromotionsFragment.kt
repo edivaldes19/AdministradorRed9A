@@ -1,4 +1,4 @@
-package com.manuel.administradorred.promo
+package com.manuel.administradorred.offers_and_promotions
 
 import android.app.Activity
 import android.app.Dialog
@@ -26,7 +26,7 @@ import com.manuel.administradorred.databinding.FragmentOffersAndPromotionsBindin
 import com.manuel.administradorred.fcm.NotificationRS
 import java.io.ByteArrayOutputStream
 
-class PromoFragment : DialogFragment(), DialogInterface.OnShowListener {
+class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentOffersAndPromotionsBinding? = null
     private var positiveButton: MaterialButton? = null
     private var negativeButton: MaterialButton? = null

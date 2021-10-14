@@ -13,13 +13,13 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -33,8 +33,8 @@ import java.io.ByteArrayOutputStream
 
 class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentDialogAddBinding? = null
-    private var positiveButton: Button? = null
-    private var negativeButton: Button? = null
+    private var positiveButton: MaterialButton? = null
+    private var negativeButton: MaterialButton? = null
     private var packageService: PackageService? = null
     private var photoSelectedUri: Uri? = null
     private val resultLauncher =
@@ -70,8 +70,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         configButtons()
         val dialog = dialog as? AlertDialog
         dialog?.let { alertDialog ->
-            positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
-            negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
+            positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE) as MaterialButton?
+            negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE) as MaterialButton?
             packageService?.let { positiveButton?.text = getString(R.string.update) }
             positiveButton?.setOnClickListener {
                 binding?.let { fragmentDialogAddBinding ->
@@ -276,9 +276,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private fun update(packageService: PackageService) {
         val db = FirebaseFirestore.getInstance()
         packageService.id?.let { id ->
-            db.collection(Constants.COLL_PACKAGES)
-                .document(id)
-                .set(packageService)
+            db.collection(Constants.COLL_PACKAGES).document(id).set(packageService)
                 .addOnSuccessListener {
                     Toast.makeText(activity, getString(R.string.update_package), Toast.LENGTH_SHORT)
                         .show()

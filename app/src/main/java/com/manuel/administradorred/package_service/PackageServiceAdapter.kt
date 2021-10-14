@@ -18,7 +18,7 @@ class PackageServiceAdapter(
     private lateinit var context: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        val view = LayoutInflater.from(context).inflate(R.layout.item_package, parent, false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_package_service, parent, false)
         return ViewHolder(view)
     }
 

@@ -13,9 +13,9 @@
         android:theme="@style/Theme.AdministradorRed"
         tools:ignore="AllowBackup">
         <activity
-            android:name=".contract.ContractActivity"
+            android:name=".requested_contract.RequestedRequestedRequestedContractActivity"
             android:exported="false"
-            android:label="@string/my_contracts"
+            android:label="@string/contract_requests"
             android:parentActivityName=".package_service.MainActivity"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity" />
