@@ -16,6 +16,7 @@ public class ConnectionReceiver extends BroadcastReceiver {
         if (receiverListener != null) {
             boolean isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting();
             receiverListener.onNetworkChange(isConnected);
+            //Metodo onReceive
         }
     }
 
