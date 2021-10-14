@@ -1,6 +1,6 @@
 package com.manuel.administradorred.requested_contract
 
-import com.manuel.administradorred.entities.Contract
+import com.manuel.administradorred.models.Contract
 
 interface OnRequestedContractListener {
     fun onStartChat(contract: Contract)

@@ -1,5 +1,6 @@
 package com.manuel.administradorred.chat
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
@@ -17,10 +18,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
-import com.manuel.administradorred.requested_contract.RequestedContractAux
 import com.manuel.administradorred.databinding.FragmentChatBinding
-import com.manuel.administradorred.entities.Contract
-import com.manuel.administradorred.entities.Message
+import com.manuel.administradorred.models.Contract
+import com.manuel.administradorred.models.Message
+import com.manuel.administradorred.requested_contract.RequestedContractAux
 import com.manuel.administradorred.utils.Constants
 
 class ChatFragment : Fragment(), OnChatListener {
@@ -54,7 +55,7 @@ class ChatFragment : Fragment(), OnChatListener {
     override fun onDestroy() {
         (activity as? AppCompatActivity)?.let { appCompatActivity ->
             appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            appCompatActivity.supportActionBar?.title = getString(R.string.my_contracts)
+            appCompatActivity.supportActionBar?.title = getString(R.string.contract_requests)
             setHasOptionsMenu(false)
         }
         super.onDestroy()
@@ -72,7 +73,7 @@ class ChatFragment : Fragment(), OnChatListener {
                             fragmentChatBinding.root,
                             getString(R.string.error_clearing_message),
                             Snackbar.LENGTH_SHORT
-                        ).show()
+                        ).setTextColor(Color.RED).show()
                     } else {
                         Toast.makeText(
                             activity,

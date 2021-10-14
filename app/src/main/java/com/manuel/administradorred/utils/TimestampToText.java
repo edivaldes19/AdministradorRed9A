@@ -1,10 +1,8 @@
 package com.manuel.administradorred.utils;
 
-import android.annotation.SuppressLint;
 import android.app.Application;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.manuel.administradorred.R;
 
 public class TimestampToText extends Application {
     private static final int SECOND_MILLIS = 1000;
@@ -12,48 +10,29 @@ public class TimestampToText extends Application {
     private static final int HOUR_MILLIS = 60 * MINUTE_MILLIS;
     private static final int DAY_MILLIS = 24 * HOUR_MILLIS;
 
-    public static String getTimeAgo(long time) {
+    public String getTimeAgo(long time) {
         if (time < 1000000000000L) {
             time *= 1000;
         }
         long now = System.currentTimeMillis();
         if (time > now || time <= 0) {
-            return "Hace un momento";
+            return getString(R.string.a_while_ago);
         }
         final long diff = now - time;
         if (diff < MINUTE_MILLIS) {
-            return "Hace un momento";
+            return getString(R.string.a_while_ago);
         } else if (diff < 2 * MINUTE_MILLIS) {
-            return "Hace un minuto";
+            return getString(R.string.a_minute_ago);
         } else if (diff < 50 * MINUTE_MILLIS) {
-            return "Hace " + diff / MINUTE_MILLIS + " minutos";
+            return getString(R.string.ago) + " " + diff / MINUTE_MILLIS + " " + getString(R.string.minutes);
         } else if (diff < 90 * MINUTE_MILLIS) {
-            return "Hace una hora";
+            return getString(R.string.an_hour_ago);
         } else if (diff < 24 * HOUR_MILLIS) {
-            return "Hace " + diff / HOUR_MILLIS + " hora(s)";
+            return getString(R.string.ago) + " " + diff / HOUR_MILLIS + " " + getString(R.string.hours);
         } else if (diff < 48 * HOUR_MILLIS) {
-            return "Ayer";
+            return getString(R.string.yesterday);
         } else {
-            return "Hace " + diff / DAY_MILLIS + " día(s)";
-        }
-    }
-
-    public static String timeFormatAMPM(long time) {
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        if (time < 1000000000000L) {
-            time *= 1000;
-        }
-        long now = System.currentTimeMillis();
-        if (time > now || time <= 0) {
-            return formatter.format(new Date(time));
-        }
-        final long diff = now - time;
-        if (diff < 24 * HOUR_MILLIS) {
-            return formatter.format(new Date(time));
-        } else if (diff < 48 * HOUR_MILLIS) {
-            return "Ayer";
-        } else {
-            return "Hace " + diff / DAY_MILLIS + " día(s)";
+            return getString(R.string.ago) + " " + diff / DAY_MILLIS + " " + getString(R.string.days);
         }
     }
 }

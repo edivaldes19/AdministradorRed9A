@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.manuel.administradorred.R
-import com.manuel.administradorred.databinding.ItemContractBinding
-import com.manuel.administradorred.entities.Contract
+import com.manuel.administradorred.databinding.ItemRequestedContractBinding
+import com.manuel.administradorred.models.Contract
+import com.manuel.administradorred.utils.TimestampToText
 
 class RequestedContractAdapter(
     private val contractList: MutableList<Contract>,
@@ -25,7 +26,8 @@ class RequestedContractAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         context = parent.context
-        val view = LayoutInflater.from(context).inflate(R.layout.item_requested_contract, parent, false)
+        val view =
+            LayoutInflater.from(context).inflate(R.layout.item_requested_contract, parent, false)
         return ViewHolder(view)
     }
 
@@ -34,7 +36,7 @@ class RequestedContractAdapter(
         holder.setListener(contract)
         holder.binding.tvId.text = context.getString(R.string.contract_id, contract.id)
         var names = ""
-        contract.packages.forEach {
+        contract.packagesServices.forEach {
             names += "${it.value.name}, "
         }
         holder.binding.tvProductNames.text = names.dropLast(2)
@@ -49,6 +51,8 @@ class RequestedContractAdapter(
         } else {
             holder.binding.actvStatus.setText(context.getText(R.string.unknown), false)
         }
+        val time = TimestampToText().getTimeAgo(contract.timestamp)
+        holder.binding.tvDate.text = time
     }
 
     override fun getItemCount(): Int = contractList.size
@@ -58,7 +62,7 @@ class RequestedContractAdapter(
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val binding = ItemContractBinding.bind(view)
+        val binding = ItemRequestedContractBinding.bind(view)
         fun setListener(contract: Contract) {
             binding.actvStatus.setOnItemClickListener { _, _, position, _ ->
                 contract.status = aKeys[position]

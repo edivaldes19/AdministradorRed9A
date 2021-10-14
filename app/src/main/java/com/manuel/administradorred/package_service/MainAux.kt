@@ -1,7 +1,7 @@
 package com.manuel.administradorred.package_service
 
-import com.manuel.administradorred.entities.PackageService
+import com.manuel.administradorred.models.PackageService
 
 interface MainAux {
-    fun getPackageSelected(): PackageService?
+    fun getPackageServiceSelected(): PackageService?
 }

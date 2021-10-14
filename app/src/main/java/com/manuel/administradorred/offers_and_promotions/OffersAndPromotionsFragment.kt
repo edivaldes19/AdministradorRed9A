@@ -1,10 +1,12 @@
 package com.manuel.administradorred.offers_and_promotions
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -20,6 +22,7 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentOffersAndPromotionsBinding
@@ -31,13 +34,17 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     private var positiveButton: MaterialButton? = null
     private var negativeButton: MaterialButton? = null
     private var photoSelectedUri: Uri? = null
+    private val errorSnack: Snackbar by lazy {
+        Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+    }
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 photoSelectedUri = activityResult.data?.data
                 binding?.let { fragmentOffersAndPromotionsBinding ->
                     Glide.with(this).load(photoSelectedUri).diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop().into(fragmentOffersAndPromotionsBinding.imgProductPreview)
+                        .centerCrop()
+                        .into(fragmentOffersAndPromotionsBinding.imgPackageServicePreview)
                 }
             }
         }
@@ -77,9 +84,14 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding = null
+    }
+
     private fun configButtons() {
         binding?.let { fragmentOffersAndPromotionsBinding ->
-            fragmentOffersAndPromotionsBinding.ibProduct.setOnClickListener {
+            fragmentOffersAndPromotionsBinding.ibPackageService.setOnClickListener {
                 openGallery()
             }
         }
@@ -90,6 +102,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         resultLauncher.launch(intent)
     }
 
+    @SuppressLint("SetTextI18n")
     private fun uploadReducedImage() {
         photoSelectedUri?.let { uri ->
             binding?.let { binding ->
@@ -105,7 +118,13 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                 (100 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
                             taskSnapshot.run {
                                 binding.progressBar.progress = progress
-                                binding.tvProgress.text = String.format("%s%%", progress)
+                                binding.tvProgress.text =
+                                    "${getString(R.string.uploading_image)} ${
+                                        String.format(
+                                            "%s%%",
+                                            progress
+                                        )
+                                    }"
                             }
                         }.addOnSuccessListener { taskSnapshot ->
                             taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
@@ -125,22 +144,20 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                         ).show()
                                         dismiss()
                                     } else {
-                                        Toast.makeText(
-                                            activity,
-                                            getString(R.string.failed_to_send_the_promotion),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        errorSnack.apply {
+                                            setText(getString(R.string.failed_to_send_the_promotion))
+                                            show()
+                                        }
                                     }
                                     enableUI(true)
                                 }
                             }
                         }
                         .addOnFailureListener {
-                            Toast.makeText(
-                                activity,
-                                getString(R.string.image_upload_error),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            errorSnack.apply {
+                                setText(getString(R.string.image_upload_error))
+                                show()
+                            }
                             enableUI(true)
                         }
                 }
@@ -186,10 +203,5 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                 etTopic.isEnabled = enable
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding = null
     }
 }

@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.ErrorCodes
 import com.firebase.ui.auth.IdpResponse
@@ -35,9 +36,9 @@ import com.google.firebase.storage.StorageException
 import com.manuel.administradorred.R
 import com.manuel.administradorred.add.AddDialogFragment
 import com.manuel.administradorred.databinding.ActivityMainBinding
-import com.manuel.administradorred.entities.PackageService
+import com.manuel.administradorred.models.PackageService
 import com.manuel.administradorred.offers_and_promotions.OffersAndPromotionsFragment
-import com.manuel.administradorred.requested_contract.RequestedRequestedRequestedContractActivity
+import com.manuel.administradorred.requested_contract.RequestedContractActivity
 import com.manuel.administradorred.utils.ConnectionReceiver
 import com.manuel.administradorred.utils.Constants
 
@@ -47,16 +48,23 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var packageServiceAdapter: PackageServiceAdapter
-    private lateinit var firestormListener: ListenerRegistration
+    private lateinit var listenerRegistration: ListenerRegistration
     private var packageServiceSelected: PackageService? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private val errorSnack: Snackbar by lazy {
+        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+    }
     private val authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             val response = IdpResponse.fromResultIntent(activityResult.data)
             if (activityResult.resultCode == RESULT_OK) {
                 val user = FirebaseAuth.getInstance().currentUser
                 if (user != null) {
-                    Toast.makeText(this, getString(R.string.welcome), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "${getString(R.string.welcome)} ${user.displayName}",
+                        Toast.LENGTH_LONG
+                    ).show()
                     firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
                         param(FirebaseAnalytics.Param.SUCCESS, 100)
                         param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_LOGIN)
@@ -74,17 +82,15 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 } else {
                     response.error?.let { firebaseUiException ->
                         if (firebaseUiException.errorCode == ErrorCodes.NO_NETWORK) {
-                            Toast.makeText(
-                                this,
-                                getString(R.string.there_is_no_internet_conection),
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            errorSnack.apply {
+                                setText("${getString(R.string.error_code)}: ${firebaseUiException.errorCode}")
+                                show()
+                            }
                         } else {
-                            Toast.makeText(
-                                this,
-                                "${getString(R.string.error_code)}: ${firebaseUiException.errorCode}",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            errorSnack.apply {
+                                setText(getString(R.string.network_error))
+                                show()
+                            }
                         }
                         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
                             param(
@@ -118,6 +124,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_AdministradorRed)
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -126,26 +133,6 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         configButtons()
         configAnalytics()
         checkConnection()
-
-
-    }
-
-    private fun checkConnection() {
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        registerReceiver(ConnectionReceiver(), intentFilter)
-        ConnectionReceiver.receiverListener = this
-        val manager =
-            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = manager.activeNetworkInfo
-        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
-        showNetworkErrorToast(isConnected)
-    }
-
-    private fun showNetworkErrorToast(connected: Boolean) {
-        if (!connected) {
-            Toast.makeText(this, getString(R.string.network_error), Toast.LENGTH_LONG).show()
-        }
     }
 
     override fun onResume() {
@@ -157,7 +144,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     override fun onPause() {
         super.onPause()
         firebaseAuth.removeAuthStateListener(authStateListener)
-        firestormListener.remove()
+        listenerRegistration.remove()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -178,17 +165,16 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                         param(FirebaseAnalytics.Param.SUCCESS, 100)
                         param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
                     }
-                }.addOnCompleteListener {
-                    if (it.isSuccessful) {
-                        binding.nsvPackages.visibility = View.GONE
+                }.addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        binding.nsvPackagesServices.visibility = View.GONE
                         binding.llProgress.visibility = View.VISIBLE
-                        binding.efab.hide()
+                        binding.efabNewPackageService.hide()
                     } else {
-                        Toast.makeText(
-                            this,
-                            getString(R.string.failed_to_log_out),
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        errorSnack.apply {
+                            setText(getString(R.string.failed_to_log_out))
+                            show()
+                        }
                         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
                             param(FirebaseAnalytics.Param.SUCCESS, 201)
                             param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
@@ -197,10 +183,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 }
             }
             R.id.action_contract_history -> startActivity(
-                Intent(
-                    this,
-                    RequestedRequestedRequestedContractActivity::class.java
-                )
+                Intent(this, RequestedContractActivity::class.java)
             )
             R.id.action_promo -> {
                 OffersAndPromotionsFragment().show(
@@ -223,9 +206,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         adapter.add(getString(R.string.add_more_images))
         MaterialAlertDialogBuilder(this).setAdapter(adapter) { _: DialogInterface, position: Int ->
             when (position) {
-                0 -> {
-                    confirmDeletePackageService(packageService)
-                }
+                0 -> confirmDeletePackageService(packageService)
                 1 -> {
                     packageServiceSelected = packageService
                     val intent =
@@ -237,34 +218,29 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         }.show()
     }
 
-    override fun getPackageSelected(): PackageService? = packageServiceSelected
-    private fun uploadImage(position: Int) {
-        FirebaseAuth.getInstance().currentUser?.let { user ->
-            progressSnack.apply {
-                setTextColor(Color.WHITE)
-                setText("${getString(R.string.uploading_image)} ${position + 1} ${getString(R.string.of)} $count...")
-                show()
-            }
-            val packageServiceRef = FirebaseStorage.getInstance().reference.child(user.uid)
-                .child(Constants.PATH_PACKAGE_IMAGES).child(packageServiceSelected!!.id!!)
-                .child("image${position + 1}")
-            packageServiceRef.putFile(uriList[position]).addOnSuccessListener {
-                if (position < count - 1) {
-                    uploadImage(position + 1)
-                } else {
-                    progressSnack.apply {
-                        setTextColor(Color.CYAN)
-                        setText(getString(R.string.images_uploaded_successfully))
-                        duration = Snackbar.LENGTH_SHORT
-                        show()
-                    }
-                }
-            }.addOnFailureListener {
-                progressSnack.apply {
-                    setTextColor(Color.RED)
-                    setText("${getString(R.string.image_upload_error)} ${position + 1}")
-                    duration = Snackbar.LENGTH_SHORT
+    override fun getPackageServiceSelected(): PackageService? = packageServiceSelected
+    override fun onNetworkChange(isConnected: Boolean) {
+        showNetworkErrorToast(isConnected)
+    }
+
+    private fun configFirestoreRealtime() {
+        val db = FirebaseFirestore.getInstance()
+        val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
+        listenerRegistration = packageServiceRef.addSnapshotListener { snapshots, error ->
+            if (error != null) {
+                errorSnack.apply {
+                    setText(getString(R.string.failed_to_query_the_data))
                     show()
+                }
+                return@addSnapshotListener
+            }
+            for (snapshot in snapshots!!.documentChanges) {
+                val packageService = snapshot.document.toObject(PackageService::class.java)
+                packageService.id = snapshot.document.id
+                when (snapshot.type) {
+                    DocumentChange.Type.ADDED -> packageServiceAdapter.add(packageService)
+                    DocumentChange.Type.MODIFIED -> packageServiceAdapter.update(packageService)
+                    DocumentChange.Type.REMOVED -> packageServiceAdapter.delete(packageService)
                 }
             }
         }
@@ -276,16 +252,23 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
             if (auth.currentUser != null) {
                 supportActionBar?.title = auth.currentUser?.displayName
                 binding.llProgress.visibility = View.GONE
-                binding.nsvPackages.visibility = View.VISIBLE
-                binding.efab.show()
+                binding.nsvPackagesServices.visibility = View.VISIBLE
+                binding.efabNewPackageService.show()
             } else {
                 val providers = arrayListOf(
                     AuthUI.IdpConfig.EmailBuilder().build(),
                     AuthUI.IdpConfig.GoogleBuilder().build()
                 )
+                val loginView = AuthMethodPickerLayout.Builder(R.layout.view_login)
+                    .setEmailButtonId(R.id.btnEmail).setGoogleButtonId(R.id.btnGoogle)
+                    .setTosAndPrivacyPolicyId(R.id.tvTermsAndConditions).build()
                 authLauncher.launch(
                     AuthUI.getInstance().createSignInIntentBuilder()
-                        .setAvailableProviders(providers).setIsSmartLockEnabled(false).build()
+                        .setAvailableProviders(providers).setIsSmartLockEnabled(false)
+                        .setTosAndPrivacyPolicyUrls(
+                            Constants.TERMS_AND_CONDITIONS,
+                            Constants.PRIVACY_POLICY
+                        ).setAuthMethodPickerLayout(loginView).setTheme(R.style.LoginTheme).build()
                 )
             }
         }
@@ -294,14 +277,16 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     private fun configRecyclerView() {
         packageServiceAdapter = PackageServiceAdapter(mutableListOf(), this)
         binding.recyclerView.apply {
-            layoutManager =
-                GridLayoutManager(this@MainActivity, 2, GridLayoutManager.HORIZONTAL, false)
+            layoutManager = GridLayoutManager(
+                this@MainActivity, 3,
+                GridLayoutManager.HORIZONTAL, false
+            )
             adapter = this@MainActivity.packageServiceAdapter
         }
     }
 
     private fun configButtons() {
-        binding.efab.setOnClickListener {
+        binding.efabNewPackageService.setOnClickListener {
             packageServiceSelected = null
             AddDialogFragment().show(
                 supportFragmentManager,
@@ -314,31 +299,42 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         firebaseAnalytics = Firebase.analytics
     }
 
-    private fun configFirestoreRealtime() {
-        val db = FirebaseFirestore.getInstance()
-        val packageServiceRef = db.collection(Constants.COLL_PACKAGES)
-        firestormListener = packageServiceRef.addSnapshotListener { snapshots, error ->
-            if (error != null) {
-                Toast.makeText(
-                    this,
-                    getString(R.string.failed_to_query_the_data),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return@addSnapshotListener
+    private fun checkConnection() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        registerReceiver(ConnectionReceiver(), intentFilter)
+        ConnectionReceiver.receiverListener = this
+        val manager =
+            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = manager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
+        showNetworkErrorToast(isConnected)
+    }
+
+    private fun uploadImage(position: Int) {
+        FirebaseAuth.getInstance().currentUser?.let { user ->
+            progressSnack.apply {
+                setText("${getString(R.string.uploading_image)} ${position + 1} de $count...")
+                show()
             }
-            for (snapshot in snapshots!!.documentChanges) {
-                val packageService = snapshot.document.toObject(PackageService::class.java)
-                packageService.id = snapshot.document.id
-                when (snapshot.type) {
-                    DocumentChange.Type.ADDED -> {
-                        packageServiceAdapter.add(packageService)
+            val packageServiceRef = FirebaseStorage.getInstance().reference.child(user.uid)
+                .child(Constants.PATH_PACKAGE_SERVICE_IMAGES).child(packageServiceSelected!!.id!!)
+                .child("image${position + 1}")
+            packageServiceRef.putFile(uriList[position]).addOnSuccessListener {
+                if (position < count - 1) {
+                    uploadImage(position + 1)
+                } else {
+                    progressSnack.apply {
+                        setText(getString(R.string.images_uploaded_successfully))
+                        duration = Snackbar.LENGTH_SHORT
+                        show()
                     }
-                    DocumentChange.Type.MODIFIED -> {
-                        packageServiceAdapter.update(packageService)
-                    }
-                    DocumentChange.Type.REMOVED -> {
-                        packageServiceAdapter.delete(packageService)
-                    }
+                }
+            }.addOnFailureListener {
+                progressSnack.apply {
+                    setText("${getString(R.string.image_upload_error)} ${position + 1}")
+                    duration = Snackbar.LENGTH_LONG
+                    show()
                 }
             }
         }
@@ -355,16 +351,13 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                             photoRef.delete().addOnSuccessListener {
                                 deletePackageServiceFromFirestore(id)
                             }.addOnFailureListener { exception ->
-                                if ((exception as StorageException).errorCode ==
-                                    StorageException.ERROR_OBJECT_NOT_FOUND
-                                ) {
+                                if ((exception as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND) {
                                     deletePackageServiceFromFirestore(id)
                                 } else {
-                                    Toast.makeText(
-                                        this,
-                                        getString(R.string.failed_to_delete_image),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    errorSnack.apply {
+                                        setText(getString(R.string.failed_to_delete_image))
+                                        show()
+                                    }
                                 }
                             }
                         } catch (e: Exception) {
@@ -378,14 +371,21 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
 
     private fun deletePackageServiceFromFirestore(packageServiceId: String) {
         val db = FirebaseFirestore.getInstance()
-        val packageServiceRef = db.collection(Constants.COLL_PACKAGES)
+        val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
         packageServiceRef.document(packageServiceId).delete().addOnFailureListener {
-            Toast.makeText(this, getString(R.string.failed_to_remove_package), Toast.LENGTH_SHORT)
-                .show()
+            errorSnack.apply {
+                setText(getString(R.string.failed_to_remove_package))
+                show()
+            }
         }
     }
 
-    override fun onNetworkChange(isConnected: Boolean) {
-        showNetworkErrorToast(isConnected)
+    private fun showNetworkErrorToast(connected: Boolean) {
+        if (!connected) {
+            errorSnack.apply {
+                setText(getString(R.string.network_error))
+                show()
+            }
+        }
     }
 }

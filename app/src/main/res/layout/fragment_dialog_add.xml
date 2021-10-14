@@ -6,30 +6,21 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
         android:padding="@dimen/common_padding_default">
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.5" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilName"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/name"
             app:counterEnabled="true"
-            app:counterMaxLength="50"
-            app:layout_constraintBottom_toTopOf="@id/tilDescription"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:counterMaxLength="50">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etName"
@@ -43,16 +34,12 @@
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilDescription"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
             android:hint="@string/description"
             app:counterEnabled="true"
-            app:counterMaxLength="100"
-            app:layout_constraintBottom_toTopOf="@id/tilAvailables"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilName">
+            app:counterMaxLength="100">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDescription"
@@ -63,121 +50,119 @@
                 tools:text="Con este paquete aprovecha todas las ventajas de navegación durante el otoño." />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilAvailables"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
-            android:layout_marginEnd="@dimen/common_padding_min"
-            android:hint="@string/available"
-            app:counterEnabled="true"
-            app:counterMaxLength="3"
-            app:layout_constraintBottom_toTopOf="@id/tilSpeed"
-            app:layout_constraintEnd_toEndOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilDescription">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etAvailables"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilAvailable"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:digits="0123456789"
-                android:inputType="phone"
-                android:maxLength="3"
-                tools:text="50" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginEnd="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:hint="@string/available"
+                app:counterEnabled="true"
+                app:counterMaxLength="3">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilPrice"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etAvailables"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:inputType="phone"
+                    android:maxLength="3"
+                    tools:text="50" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilPrice"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:hint="@string/price"
+                app:counterEnabled="true"
+                app:counterMaxLength="4"
+                app:prefixText="$"
+                app:suffixText="MXN">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits=".0123456789"
+                    android:inputType="phone"
+                    android:maxLength="4"
+                    tools:text="499" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_padding_min"
             android:layout_marginTop="@dimen/common_padding_min"
-            android:hint="@string/price"
-            app:counterEnabled="true"
-            app:counterMaxLength="4"
-            app:layout_constraintBottom_toTopOf="@id/tilLimit"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/tilDescription"
-            app:prefixText="$"
-            app:suffixText="MXN">
+            android:baselineAligned="false"
+            android:orientation="horizontal">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPrice"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilSpeed"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:digits=".0123456789"
-                android:inputType="phone"
-                android:maxLength="4"
-                tools:text="499" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginEnd="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:hint="@string/speed"
+                app:counterEnabled="true"
+                app:counterMaxLength="4"
+                app:suffixText="Mbps">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilSpeed"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/common_padding_min"
-            android:layout_marginEnd="@dimen/common_padding_min"
-            android:hint="@string/speed"
-            app:counterEnabled="true"
-            app:counterMaxLength="4"
-            app:layout_constraintEnd_toEndOf="@id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilAvailables"
-            app:suffixText="Mbps">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:inputType="phone"
+                    android:maxLength="4"
+                    tools:text="30" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etSpeed"
-                android:layout_width="match_parent"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilLimit"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:digits="0123456789"
-                android:inputType="phone"
-                android:maxLength="4"
-                tools:text="30" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginStart="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:hint="@string/limit"
+                app:counterEnabled="true"
+                app:counterMaxLength="4"
+                app:suffixText="Gbps">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilLimit"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_padding_min"
-            android:layout_marginTop="@dimen/common_padding_min"
-            android:hint="@string/limit"
-            app:counterEnabled="true"
-            app:counterMaxLength="4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@id/guideline"
-            app:layout_constraintTop_toBottomOf="@id/tilPrice"
-            app:suffixText="Gbps">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etLimit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:digits="0123456789"
-                android:inputType="phone"
-                android:maxLength="4"
-                tools:text="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLimit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:digits="0123456789"
+                    android:inputType="phone"
+                    android:maxLength="4"
+                    tools:text="10" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilValidity"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
             android:hint="@string/validity"
             app:counterEnabled="true"
             app:counterMaxLength="2"
-            app:layout_constraintBottom_toTopOf="@id/imgPackagePreview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilSpeed"
             app:suffixText="Meses">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -190,55 +175,50 @@
                 tools:text="3" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/imgPackagePreview"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/common_padding_min"
-            android:layout_marginBottom="@dimen/common_padding_min"
-            android:background="@color/gray_100"
-            app:layout_constraintBottom_toTopOf="@id/progressBar"
-            app:layout_constraintDimensionRatio="16:9"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilValidity" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/ibPackage"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:background="?attr/selectableItemBackground"
-            android:src="@drawable/ic_image_search"
-            app:layout_constraintBottom_toBottomOf="@id/imgPackagePreview"
-            app:layout_constraintEnd_toEndOf="@id/imgPackagePreview"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@id/imgPackagePreview"
-            app:layout_constraintTop_toTopOf="@id/imgPackagePreview"
-            app:layout_constraintVertical_bias="0.0"
-            tools:ignore="ContentDescription" />
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgPackagePreview"
+                android:layout_width="@dimen/package_img_width_preview"
+                android:layout_height="@dimen/package_img_height_preview"
+                android:layout_marginTop="@dimen/common_padding_min"
+                android:layout_marginBottom="@dimen/common_padding_min"
+                android:background="@color/gray_100"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearance="@style/ImageWithEdgesRoundedInHalf" />
+
+            <ImageButton
+                android:id="@+id/ibPackageService"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackground"
+                android:src="@drawable/ic_image_search"
+                app:layout_constraintBottom_toBottomOf="@id/imgPackagePreview"
+                app:layout_constraintEnd_toEndOf="@id/imgPackagePreview"
+                app:layout_constraintStart_toStartOf="@id/imgPackagePreview"
+                app:layout_constraintTop_toTopOf="@id/imgPackagePreview"
+                tools:ignore="ContentDescription" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBar"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/package_img_width_preview"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@id/tvProgress"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imgPackagePreview"
             app:trackCornerRadius="@dimen/common_padding_max"
             tools:progress="50"
             tools:visibility="visible" />
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tvProgress"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/package_img_width_preview"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/progressBar"
-            app:layout_constraintStart_toStartOf="@id/progressBar"
-            app:layout_constraintTop_toBottomOf="@id/progressBar"
             tools:text="Subiendo imagen... 50%" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
 </androidx.core.widget.NestedScrollView>

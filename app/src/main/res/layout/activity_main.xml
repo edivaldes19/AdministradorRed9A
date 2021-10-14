@@ -7,7 +7,7 @@
     tools:context=".package_service.MainActivity">
 
     <androidx.core.widget.NestedScrollView
-        android:id="@+id/nsvPackages"
+        android:id="@+id/nsvPackagesServices"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -48,7 +48,7 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/efab"
+        android:id="@+id/efabNewPackageService"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/common_padding_default"

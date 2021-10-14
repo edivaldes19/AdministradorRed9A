@@ -1,4 +1,4 @@
-package com.manuel.administradorred.entities
+package com.manuel.administradorred.models
 
 class EventPost {
     var isSuccess: Boolean = false

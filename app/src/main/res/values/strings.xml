@@ -49,10 +49,11 @@
     <string name="failed_to_log_out">Error al cerrar sesión.</string>
     <string name="see_you_soon">Nos vemos pronto.</string>
     <string name="error_code">Código de error</string>
-    <string name="uploading_image">Subiendo imagen</string>
-    <string name="images_uploaded_successfully">Imágenes subidas correctamente</string>
-    <string name="image_upload_error">Error al subir la imagen</string>
+    <string name="uploading_image">Subiendo imagen…</string>
+    <string name="images_uploaded_successfully">Imágenes subidas correctamente.</string>
+    <string name="image_upload_error">Error al subir la imagen.</string>
     <string name="welcome">Bienvenido</string>
+    <string name="welcome_administrator">¡Bienvenido! Administrador de red</string>
     <string name="there_is_no_internet_conection">No hay conexión a internet.</string>
     <string name="you_have_logged_out">Has cerrado sesión.</string>
     <string name="of">de</string>
@@ -63,4 +64,16 @@
     <string name="failed_to_send_the_promotion">Error al enviar la promoción.</string>
     <string name="contract_requests">Solicitudes de contratos</string>
     <string name="network_error">Error de red, verifique su conexion.</string>
+    <string name="a_while_ago">Hace un memento.</string>
+    <string name="a_minute_ago">Hace un minuto.</string>
+    <string name="ago">Hace</string>
+    <string name="minutes">minutos.</string>
+    <string name="an_hour_ago">Hace una hora.</string>
+    <string name="hours">hora(s)</string>
+    <string name="yesterday">Ayer</string>
+    <string name="days">día(s)</string>
+    <string name="login_email">Correo electrónico</string>
+    <string name="did_you_forget_your_password">¿Olvidaste tu contraseña?</string>
+    <string name="you_do_not_have_an_account">¿No tienes cuenta?… Selecciona un método de autenticación para crear una.</string>
+    <string name="login_google">Acceder con Google</string>
 </resources>

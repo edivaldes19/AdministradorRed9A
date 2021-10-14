@@ -1,9 +1,11 @@
 package com.manuel.administradorred.requested_contract
 
+import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
@@ -12,17 +14,21 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
 import com.manuel.administradorred.chat.ChatFragment
-import com.manuel.administradorred.databinding.ActivityContractBinding
-import com.manuel.administradorred.entities.Contract
+import com.manuel.administradorred.databinding.ActivityRequestedContractBinding
 import com.manuel.administradorred.fcm.NotificationRS
+import com.manuel.administradorred.models.Contract
 import com.manuel.administradorred.utils.Constants
 import java.util.*
 
-class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnRequestedContractListener, RequestedContractAux {
-    private lateinit var binding: ActivityContractBinding
+class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListener,
+    RequestedContractAux {
+    private lateinit var binding: ActivityRequestedContractBinding
     private lateinit var adapterRequested: RequestedContractAdapter
     private lateinit var contractSelected: Contract
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private val errorSnack: Snackbar by lazy {
+        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+    }
     private val aValues: Array<String> by lazy {
         resources.getStringArray(R.array.status_value)
     }
@@ -32,7 +38,7 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityContractBinding.inflate(layoutInflater)
+        binding = ActivityRequestedContractBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRecyclerView()
         setupFirestore()
@@ -54,21 +60,20 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
                     .show()
                 notifyClient(contract)
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO) {
-                    val products = mutableListOf<Bundle>()
-                    contract.packages.forEach {
+                    val packageServices = mutableListOf<Bundle>()
+                    contract.packagesServices.forEach {
                         val bundle = Bundle()
-                        bundle.putString("id_product", it.key)
-                        products.add(bundle)
+                        bundle.putString("id_packageService", it.key)
+                        packageServices.add(bundle)
                     }
-                    param(FirebaseAnalytics.Param.SHIPPING, products.toTypedArray())
+                    param(FirebaseAnalytics.Param.SHIPPING, packageServices.toTypedArray())
                     param(FirebaseAnalytics.Param.PRICE, contract.totalPrice)
                 }
             }.addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    getString(R.string.failed_to_update_contract),
-                    Toast.LENGTH_SHORT
-                ).show()
+                errorSnack.apply {
+                    setText(getString(R.string.failed_to_update_contract))
+                    show()
+                }
             }
     }
 
@@ -76,8 +81,8 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
     private fun setupRecyclerView() {
         adapterRequested = RequestedContractAdapter(mutableListOf(), this)
         binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(this@RequestedRequestedRequestedContractActivity)
-            adapter = this@RequestedRequestedRequestedContractActivity.adapterRequested
+            layoutManager = LinearLayoutManager(this@RequestedContractActivity)
+            adapter = this@RequestedContractActivity.adapterRequested
         }
     }
 
@@ -87,18 +92,15 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
             .orderBy(Constants.PROP_DATE, Query.Direction.DESCENDING).get()
             .addOnSuccessListener { snapshot ->
                 for (document in snapshot) {
-                    val order = document.toObject(Contract::class.java)
-                    order.id = document.id
-                    adapterRequested.add(order)
+                    val contract = document.toObject(Contract::class.java)
+                    contract.id = document.id
+                    adapterRequested.add(contract)
                 }
-            }
-            .addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    getString(R.string.failed_to_query_the_data),
-                    Toast.LENGTH_SHORT
-                )
-                    .show()
+            }.addOnFailureListener {
+                errorSnack.apply {
+                    setText(getString(R.string.failed_to_query_the_data))
+                    show()
+                }
             }
     }
 
@@ -118,7 +120,7 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
                 if (tokensStr.isNotEmpty()) {
                     tokensStr = tokensStr.dropLast(1)
                     var names = ""
-                    contract.packages.forEach { entry ->
+                    contract.packagesServices.forEach { entry ->
                         names += "${entry.value.name}, "
                     }
                     names = names.dropLast(2)
@@ -133,11 +135,10 @@ class RequestedRequestedRequestedContractActivity : AppCompatActivity(), OnReque
                     )
                 }
             }.addOnFailureListener {
-                Toast.makeText(
-                    this,
-                    getString(R.string.failed_to_query_the_data),
-                    Toast.LENGTH_SHORT
-                ).show()
+                errorSnack.apply {
+                    setText(getString(R.string.failed_to_query_the_data))
+                    show()
+                }
             }
     }
 }

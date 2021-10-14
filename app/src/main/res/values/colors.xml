@@ -5,10 +5,15 @@
     <color name="blue_700">#1675d1</color>
     <color name="blue_700_light">#62a3ff</color>
     <color name="blue_700_dark">#004a9f</color>
+    <color name="blue_50">#e3f2fd</color>
+    <color name="blue_facebook">#1877f2</color>
+    <color name="green_500">#4CAF50</color>
     <color name="orange_a400">#ff9100</color>
     <color name="orange_a400_light">#ffc246</color>
     <color name="orange_a400_dark">#c56200</color>
+    <color name="red_500">#F44336</color>
     <color name="black">#000000</color>
     <color name="white">#ffffff</color>
     <color name="gray_100">#f5f5f5</color>
+    <color name="gray_200">#eeeeee</color>
 </resources>

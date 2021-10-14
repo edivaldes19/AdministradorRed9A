@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.ItemChatBinding
-import com.manuel.administradorred.entities.Message
+import com.manuel.administradorred.models.Message
 
 class ChatAdapter(
     private val messageList: MutableList<Message>,

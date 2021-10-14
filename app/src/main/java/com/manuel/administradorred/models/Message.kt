@@ -1,4 +1,4 @@
-package com.manuel.administradorred.entities
+package com.manuel.administradorred.models
 
 import com.google.firebase.database.Exclude
 

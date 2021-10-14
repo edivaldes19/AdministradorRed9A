@@ -4,7 +4,9 @@
     <dimen name="common_padding_default">16dp</dimen>
     <dimen name="common_padding_max">24dp</dimen>
     <dimen name="package_img_width">175dp</dimen>
+    <dimen name="package_img_width_preview">250dp</dimen>
     <dimen name="chat_stroke">1dp</dimen>
     <dimen name="chat_margin_horizontal">64dp</dimen>
     <dimen name="chat_guideline_end">48dp</dimen>
+    <dimen name="package_img_height_preview">200dp</dimen>
 </resources>
