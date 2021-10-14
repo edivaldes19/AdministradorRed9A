@@ -1,8 +1,11 @@
 package com.manuel.administradorred.package_service
 
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -35,9 +38,11 @@ import com.manuel.administradorred.databinding.ActivityMainBinding
 import com.manuel.administradorred.entities.PackageService
 import com.manuel.administradorred.offers_and_promotions.OffersAndPromotionsFragment
 import com.manuel.administradorred.requested_contract.RequestedRequestedRequestedContractActivity
+import com.manuel.administradorred.utils.ConnectionReceiver
 import com.manuel.administradorred.utils.Constants
 
-class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
+class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
+    ConnectionReceiver.ReceiverListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var firebaseAuth: FirebaseAuth
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
@@ -120,6 +125,27 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
         configRecyclerView()
         configButtons()
         configAnalytics()
+        checkConnection()
+
+
+    }
+
+    private fun checkConnection() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
+        registerReceiver(ConnectionReceiver(), intentFilter)
+        ConnectionReceiver.receiverListener = this
+        val manager =
+            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = manager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
+        showNetworkErrorToast(isConnected)
+    }
+
+    private fun showNetworkErrorToast(connected: Boolean) {
+        if (!connected) {
+            Toast.makeText(this, getString(R.string.network_error), Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onResume() {
@@ -357,5 +383,9 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux {
             Toast.makeText(this, getString(R.string.failed_to_remove_package), Toast.LENGTH_SHORT)
                 .show()
         }
+    }
+
+    override fun onNetworkChange(isConnected: Boolean) {
+        showNetworkErrorToast(isConnected)
     }
 }
