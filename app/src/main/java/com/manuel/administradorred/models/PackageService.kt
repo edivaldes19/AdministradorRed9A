@@ -6,7 +6,7 @@ data class PackageService(
     @get:Exclude var id: String? = null,
     var name: String? = null,
     var description: String? = null,
-    var availables: Int = 0,
+    var available: Int = 0,
     var price: Int = 0,
     var speed: Int = 0,
     var limit: Int = 0,

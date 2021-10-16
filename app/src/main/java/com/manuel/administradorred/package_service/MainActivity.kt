@@ -238,9 +238,15 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 val packageService = snapshot.document.toObject(PackageService::class.java)
                 packageService.id = snapshot.document.id
                 when (snapshot.type) {
-                    DocumentChange.Type.ADDED -> packageServiceAdapter.add(packageService)
-                    DocumentChange.Type.MODIFIED -> packageServiceAdapter.update(packageService)
-                    DocumentChange.Type.REMOVED -> packageServiceAdapter.delete(packageService)
+                    DocumentChange.Type.ADDED -> {
+                        packageServiceAdapter.add(packageService)
+                    }
+                    DocumentChange.Type.MODIFIED -> {
+                        packageServiceAdapter.update(packageService)
+                    }
+                    DocumentChange.Type.REMOVED -> {
+                        packageServiceAdapter.delete(packageService)
+                    }
                 }
             }
         }

@@ -90,7 +90,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     name = fragmentDialogAddBinding.etName.text.toString().trim(),
                                     description = fragmentDialogAddBinding.etDescription.text.toString()
                                         .trim(),
-                                    availables = fragmentDialogAddBinding.etAvailables.text.toString()
+                                    available = fragmentDialogAddBinding.etAvailables.text.toString()
                                         .trim().toInt(),
                                     price = fragmentDialogAddBinding.etPrice.text.toString().trim()
                                         .toInt(),
@@ -110,7 +110,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     description =
                                         fragmentDialogAddBinding.etDescription.text.toString()
                                             .trim()
-                                    availables =
+                                    available =
                                         fragmentDialogAddBinding.etAvailables.text.toString()
                                             .trim().toInt()
                                     price = fragmentDialogAddBinding.etPrice.text.toString().trim()
@@ -147,7 +147,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 dialog?.setTitle(getString(R.string.update_package))
                 fragmentDialogAddBinding.etName.setText(packageService.name)
                 fragmentDialogAddBinding.etDescription.setText(packageService.description)
-                fragmentDialogAddBinding.etAvailables.setText(packageService.availables.toString())
+                fragmentDialogAddBinding.etAvailables.setText(packageService.available.toString())
                 fragmentDialogAddBinding.etPrice.setText(packageService.price.toString())
                 fragmentDialogAddBinding.etSpeed.setText(packageService.speed.toString())
                 fragmentDialogAddBinding.etLimit.setText(packageService.limit.toString())

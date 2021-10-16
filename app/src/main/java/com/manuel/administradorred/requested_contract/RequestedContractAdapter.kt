@@ -8,14 +8,13 @@ import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.ItemRequestedContractBinding
-import com.manuel.administradorred.models.Contract
+import com.manuel.administradorred.models.RequestedContract
 import com.manuel.administradorred.utils.TimestampToText
 
 class RequestedContractAdapter(
-    private val contractList: MutableList<Contract>,
+    private val requestedContractList: MutableList<RequestedContract>,
     private val listenerRequested: OnRequestedContractListener
-) :
-    RecyclerView.Adapter<RequestedContractAdapter.ViewHolder>() {
+) : RecyclerView.Adapter<RequestedContractAdapter.ViewHolder>() {
     private lateinit var context: Context
     private val aValues: Array<String> by lazy {
         context.resources.getStringArray(R.array.status_value)
@@ -32,7 +31,7 @@ class RequestedContractAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val contract = contractList[position]
+        val contract = requestedContractList[position]
         holder.setListener(contract)
         holder.binding.tvId.text = context.getString(R.string.contract_id, contract.id)
         var names = ""
@@ -51,25 +50,25 @@ class RequestedContractAdapter(
         } else {
             holder.binding.actvStatus.setText(context.getText(R.string.unknown), false)
         }
-        val time = TimestampToText().getTimeAgo(contract.timestamp)
+        val time = TimestampToText.getTimeAgo(contract.timestamp)
         holder.binding.tvDate.text = time
     }
 
-    override fun getItemCount(): Int = contractList.size
-    fun add(contract: Contract) {
-        contractList.add(contract)
-        notifyItemInserted(contractList.size - 1)
+    override fun getItemCount(): Int = requestedContractList.size
+    fun add(requestedContract: RequestedContract) {
+        requestedContractList.add(requestedContract)
+        notifyItemInserted(requestedContractList.size - 1)
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val binding = ItemRequestedContractBinding.bind(view)
-        fun setListener(contract: Contract) {
+        fun setListener(requestedContract: RequestedContract) {
             binding.actvStatus.setOnItemClickListener { _, _, position, _ ->
-                contract.status = aKeys[position]
-                listenerRequested.onStatusChange(contract)
+                requestedContract.status = aKeys[position]
+                listenerRequested.onStatusChange(requestedContract)
             }
             binding.chpChat.setOnClickListener {
-                listenerRequested.onStartChat(contract)
+                listenerRequested.onStartChat(requestedContract)
             }
         }
     }

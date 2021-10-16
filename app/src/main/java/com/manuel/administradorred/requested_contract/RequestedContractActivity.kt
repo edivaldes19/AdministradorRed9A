@@ -16,7 +16,7 @@ import com.manuel.administradorred.R
 import com.manuel.administradorred.chat.ChatFragment
 import com.manuel.administradorred.databinding.ActivityRequestedContractBinding
 import com.manuel.administradorred.fcm.NotificationRS
-import com.manuel.administradorred.models.Contract
+import com.manuel.administradorred.models.RequestedContract
 import com.manuel.administradorred.utils.Constants
 import java.util.*
 
@@ -24,7 +24,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     RequestedContractAux {
     private lateinit var binding: ActivityRequestedContractBinding
     private lateinit var adapterRequested: RequestedContractAdapter
-    private lateinit var contractSelected: Contract
+    private lateinit var requestedContractSelected: RequestedContract
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private val errorSnack: Snackbar by lazy {
         Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
@@ -45,39 +45,40 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         configAnalytics()
     }
 
-    override fun onStartChat(contract: Contract) {
-        contractSelected = contract
+    override fun onStartChat(requestedContract: RequestedContract) {
+        requestedContractSelected = requestedContract
         val fragment = ChatFragment()
         supportFragmentManager.beginTransaction().add(R.id.containerMain, fragment)
             .addToBackStack(null).commit()
     }
 
-    override fun onStatusChange(contract: Contract) {
+    override fun onStatusChange(requestedContract: RequestedContract) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(Constants.COLL_CONTRACTS).document(contract.id)
-            .update(Constants.PROP_STATUS, contract.status).addOnSuccessListener {
+        db.collection(Constants.COLL_CONTRACTS_REQUESTED).document(requestedContract.id)
+            .update(Constants.PROP_STATUS, requestedContract.status).addOnSuccessListener {
                 Toast.makeText(this, getString(R.string.updated_contract), Toast.LENGTH_SHORT)
                     .show()
-                notifyClient(contract)
+                notifyClient(requestedContract)
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO) {
-                    val packageServices = mutableListOf<Bundle>()
-                    contract.packagesServices.forEach {
+                    val packagesServices = mutableListOf<Bundle>()
+                    requestedContract.packagesServices.forEach { entry ->
                         val bundle = Bundle()
-                        bundle.putString("id_packageService", it.key)
-                        packageServices.add(bundle)
+                        bundle.putString("id_package_service", entry.key)
+                        packagesServices.add(bundle)
                     }
-                    param(FirebaseAnalytics.Param.SHIPPING, packageServices.toTypedArray())
-                    param(FirebaseAnalytics.Param.PRICE, contract.totalPrice)
+                    param(FirebaseAnalytics.Param.SHIPPING, packagesServices.toTypedArray())
+                    param(FirebaseAnalytics.Param.PRICE, requestedContract.totalPrice.toDouble())
                 }
-            }.addOnFailureListener {
+            }
+            .addOnFailureListener {
                 errorSnack.apply {
-                    setText(getString(R.string.failed_to_update_contract))
+                    setText(getString(R.string.image_upload_error))
                     show()
                 }
             }
     }
 
-    override fun getContractSelected(): Contract = contractSelected
+    override fun getContractSelected(): RequestedContract = requestedContractSelected
     private fun setupRecyclerView() {
         adapterRequested = RequestedContractAdapter(mutableListOf(), this)
         binding.recyclerView.apply {
@@ -88,11 +89,11 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
 
     private fun setupFirestore() {
         val db = FirebaseFirestore.getInstance()
-        db.collection(Constants.COLL_CONTRACTS)
+        db.collection(Constants.COLL_CONTRACTS_REQUESTED)
             .orderBy(Constants.PROP_DATE, Query.Direction.DESCENDING).get()
             .addOnSuccessListener { snapshot ->
                 for (document in snapshot) {
-                    val contract = document.toObject(Contract::class.java)
+                    val contract = document.toObject(RequestedContract::class.java)
                     contract.id = document.id
                     adapterRequested.add(contract)
                 }
@@ -108,9 +109,9 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         firebaseAnalytics = Firebase.analytics
     }
 
-    private fun notifyClient(contract: Contract) {
+    private fun notifyClient(requestedContract: RequestedContract) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(Constants.COLL_USERS).document(contract.clientId)
+        db.collection(Constants.COLL_USERS).document(requestedContract.userId)
             .collection(Constants.COLL_TOKENS).get().addOnSuccessListener { snapshot ->
                 var tokensStr = ""
                 for (document in snapshot) {
@@ -120,11 +121,11 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
                 if (tokensStr.isNotEmpty()) {
                     tokensStr = tokensStr.dropLast(1)
                     var names = ""
-                    contract.packagesServices.forEach { entry ->
+                    requestedContract.packagesServices.forEach { entry ->
                         names += "${entry.value.name}, "
                     }
                     names = names.dropLast(2)
-                    val index = aKeys.indexOf(contract.status)
+                    val index = aKeys.indexOf(requestedContract.status)
                     val notificationRS = NotificationRS()
                     notificationRS.sendNotification(
                         "${getString(R.string.your_contract_is)} ${

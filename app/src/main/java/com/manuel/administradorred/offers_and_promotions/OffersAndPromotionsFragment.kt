@@ -110,8 +110,9 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                     binding.progressBar.visibility = View.VISIBLE
                     val byteArrayOutputStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
-                    val promoRef = FirebaseStorage.getInstance().reference.child("promos")
-                        .child(binding.etTopic.text.toString().trim())
+                    val promoRef =
+                        FirebaseStorage.getInstance().reference.child("offers_and_promotions")
+                            .child(binding.etTopic.text.toString().trim())
                     promoRef.putBytes(byteArrayOutputStream.toByteArray())
                         .addOnProgressListener { taskSnapshot ->
                             val progress =
@@ -152,8 +153,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                     enableUI(true)
                                 }
                             }
-                        }
-                        .addOnFailureListener {
+                        }.addOnFailureListener {
                             errorSnack.apply {
                                 setText(getString(R.string.image_upload_error))
                                 show()

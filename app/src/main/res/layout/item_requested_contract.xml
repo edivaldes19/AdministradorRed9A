@@ -71,6 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/common_padding_min"
             android:text="@string/total_price"
+            android:textAlignment="textEnd"
             android:textAppearance="?attr/textAppearanceSubtitle1"
             app:layout_constraintBottom_toBottomOf="@id/chpChat"
             app:layout_constraintEnd_toEndOf="parent"

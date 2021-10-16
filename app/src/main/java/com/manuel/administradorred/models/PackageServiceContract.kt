@@ -5,7 +5,7 @@ import com.google.firebase.firestore.Exclude
 data class PackageServiceContract(
     @get:Exclude var id: String = "",
     var name: String = "",
-    var amount: Int = 0
+    var available: Int = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

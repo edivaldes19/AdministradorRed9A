@@ -19,15 +19,15 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentChatBinding
-import com.manuel.administradorred.models.Contract
 import com.manuel.administradorred.models.Message
+import com.manuel.administradorred.models.RequestedContract
 import com.manuel.administradorred.requested_contract.RequestedContractAux
 import com.manuel.administradorred.utils.Constants
 
 class ChatFragment : Fragment(), OnChatListener {
     private var binding: FragmentChatBinding? = null
     private lateinit var adapter: ChatAdapter
-    private var contract: Contract? = null
+    private var requestedContract: RequestedContract? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -62,7 +62,7 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     override fun deleteMessage(message: Message) {
-        contract?.let { contract1 ->
+        requestedContract?.let { contract1 ->
             val database = Firebase.database
             val messageRef =
                 database.getReference(Constants.PATH_CHATS).child(contract1.id).child(message.id)
@@ -94,15 +94,15 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     private fun getContract() {
-        contract = (activity as? RequestedContractAux)?.getContractSelected()
-        contract?.let {
+        requestedContract = (activity as? RequestedContractAux)?.getContractSelected()
+        requestedContract?.let {
             setupActionBar()
             setupRealtimeDatabase()
         }
     }
 
     private fun setupRealtimeDatabase() {
-        contract?.let { it ->
+        requestedContract?.let { it ->
             val database = Firebase.database
             val chatRef = database.getReference(Constants.PATH_CHATS).child(it.id)
             val childListener = object : ChildEventListener {
@@ -173,7 +173,7 @@ class ChatFragment : Fragment(), OnChatListener {
 
     private fun sendMessage() {
         binding?.let { binding ->
-            contract?.let { contract1 ->
+            requestedContract?.let { contract1 ->
                 val database = Firebase.database
                 val chatRef = database.getReference(Constants.PATH_CHATS).child(contract1.id)
                 val user = FirebaseAuth.getInstance().currentUser
