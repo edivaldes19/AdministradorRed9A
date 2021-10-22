@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.manuel.administradorred.R
@@ -23,6 +24,7 @@ class ChatAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.root.animation = AnimationUtils.loadAnimation(context, R.anim.slide)
         val message = messageList[position]
         holder.setListener(message)
         var gravity = Gravity.END

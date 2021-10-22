@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -26,6 +27,8 @@ class PackageServiceAdapter(
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.root.animation =
+            AnimationUtils.loadAnimation(context, R.anim.fade_transition)
         val packageService = packageServiceList[position]
         holder.setListener(packageService)
         holder.binding.tvName.text = packageService.name
