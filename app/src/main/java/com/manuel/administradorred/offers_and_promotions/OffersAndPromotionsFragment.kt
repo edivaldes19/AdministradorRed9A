@@ -114,7 +114,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                 getBitmapFromUri(uri)?.let { bitmap ->
                     binding.progressBar.visibility = View.VISIBLE
                     val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream)
                     val promoRef =
                         FirebaseStorage.getInstance().reference.child("offers_and_promotions")
                             .child(binding.tvTopic.text.toString().trim())
@@ -124,13 +124,12 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                 (100 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
                             taskSnapshot.run {
                                 binding.progressBar.progress = progress
-                                binding.tvProgress.text =
-                                    "${getString(R.string.uploading_image)} ${
-                                        String.format(
-                                            "%s%%",
-                                            progress
-                                        )
-                                    }"
+                                binding.tvProgress.text = "${getString(R.string.uploading_image)} ${
+                                    String.format(
+                                        "%s%%",
+                                        progress
+                                    )
+                                }"
                             }
                         }.addOnSuccessListener { taskSnapshot ->
                             taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->

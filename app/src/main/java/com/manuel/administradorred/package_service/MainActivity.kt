@@ -156,35 +156,42 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_sign_out -> {
-                AuthUI.getInstance().signOut(this).addOnSuccessListener {
-                    Toast.makeText(
-                        this,
-                        getString(R.string.you_have_logged_out),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
-                        param(FirebaseAnalytics.Param.SUCCESS, 100)
-                        param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
-                    }
-                }.addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        binding.nsvPackagesServices.visibility = View.GONE
-                        binding.llProgress.visibility = View.VISIBLE
-                        binding.efabNewPackageService.hide()
-                    } else {
-                        errorSnack.apply {
-                            setText(getString(R.string.failed_to_log_out))
-                            show()
+                MaterialAlertDialogBuilder(this).setTitle(getString(R.string.sign_off))
+                    .setMessage(getString(R.string.are_you_sure_to_take_this_action))
+                    .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                        AuthUI.getInstance().signOut(this).addOnSuccessListener {
+                            Toast.makeText(
+                                this,
+                                getString(R.string.you_have_logged_out),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
+                                param(FirebaseAnalytics.Param.SUCCESS, 100)
+                                param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
+                            }
+                        }.addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                binding.nsvPackagesServices.visibility = View.GONE
+                                binding.llProgress.visibility = View.VISIBLE
+                                binding.efabNewPackageService.hide()
+                            } else {
+                                errorSnack.apply {
+                                    setText(getString(R.string.failed_to_log_out))
+                                    show()
+                                }
+                                firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
+                                    param(FirebaseAnalytics.Param.SUCCESS, 201)
+                                    param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
+                                }
+                            }
                         }
-                        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN) {
-                            param(FirebaseAnalytics.Param.SUCCESS, 201)
-                            param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_SIGN_OUT)
-                        }
-                    }
-                }
+                    }.setNegativeButton(getString(R.string.cancel), null).show()
             }
             R.id.action_contract_history -> startActivity(
-                Intent(this, RequestedContractActivity::class.java)
+                Intent(
+                    this,
+                    RequestedContractActivity::class.java
+                )
             )
             R.id.action_promo -> {
                 OffersAndPromotionsFragment().show(
@@ -350,9 +357,9 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     }
 
     private fun confirmDeletePackageService(packageService: PackageService) {
-        MaterialAlertDialogBuilder(this).setTitle(R.string.remove_package)
-            .setMessage(R.string.are_you_sure_to_take_this_action)
-            .setPositiveButton(R.string.delete) { _, _ ->
+        MaterialAlertDialogBuilder(this).setTitle(getString(R.string.remove_package))
+            .setMessage(getString(R.string.are_you_sure_to_take_this_action))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 packageService.id?.let { id ->
                     packageService.imagePath?.let { url ->
                         try {
@@ -375,7 +382,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                         }
                     }
                 }
-            }.setNegativeButton(R.string.cancel, null).show()
+            }.setNegativeButton(getString(R.string.cancel), null).show()
     }
 
     private fun deletePackageServiceFromFirestore(packageServiceId: String) {
