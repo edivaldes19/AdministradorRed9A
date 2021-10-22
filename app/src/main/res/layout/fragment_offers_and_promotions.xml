@@ -26,8 +26,10 @@
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:inputType="textCapSentences|textMultiLine"
-                android:maxLength="50" />
+                android:maxLength="50"
+                android:nextFocusForward="@id/etDescription" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -44,43 +46,37 @@
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:inputType="textCapSentences|textMultiLine"
-                android:maxLength="100" />
+                android:maxLength="100"
+                android:nextFocusForward="@id/tvTopic" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilTopic"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvTopic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
-            android:hint="@string/topic"
-            app:counterEnabled="true"
-            app:counterMaxLength="15"
-            app:layout_constraintBottom_toTopOf="@id/imgPackageServicePreview"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tilDescription">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etTopic"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textNoSuggestions"
-                android:maxLength="15"
-                android:text="@string/main_topic" />
-        </com.google.android.material.textfield.TextInputLayout>
+            android:layout_marginBottom="@dimen/common_padding_min"
+            android:drawableStart="@drawable/ic_store"
+            android:drawablePadding="@dimen/common_padding_max"
+            android:drawableTint="@color/black"
+            android:text="@string/main_topic"
+            android:textAlignment="textStart"
+            android:textAppearance="?attr/textAppearanceSubtitle1"
+            android:textColor="@color/black"
+            tools:ignore="UnusedAttribute" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:layout_marginBottom="@dimen/common_padding_min">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/imgPackageServicePreview"
                 android:layout_width="@dimen/package_img_width_preview"
                 android:layout_height="@dimen/package_img_height_preview"
-                android:layout_marginTop="@dimen/common_padding_min"
-                android:layout_marginBottom="@dimen/common_padding_min"
                 android:background="@color/gray_100"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -116,5 +112,37 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
             tools:text="Subiendo imagen... 50%" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                app:cornerRadius="@dimen/common_padding_max"
+                app:icon="@drawable/ic_cancel"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/add"
+                android:textAllCaps="false"
+                app:cornerRadius="@dimen/common_padding_max"
+                app:icon="@drawable/ic_check_circle"
+                tools:enabled="true" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

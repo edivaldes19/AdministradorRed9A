@@ -15,13 +15,13 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -33,12 +33,13 @@ import com.manuel.administradorred.models.EventPost
 import com.manuel.administradorred.models.PackageService
 import com.manuel.administradorred.package_service.MainAux
 import com.manuel.administradorred.utils.Constants
+import com.manuel.administradorred.utils.TextWatchers
 import java.io.ByteArrayOutputStream
 
 class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentDialogAddBinding? = null
-    private var positiveButton: Button? = null
-    private var negativeButton: Button? = null
+    private var addButton: MaterialButton? = null
+    private var cancelButton: MaterialButton? = null
     private var packageService: PackageService? = null
     private var photoSelectedUri: Uri? = null
     private val errorSnack: Snackbar by lazy {
@@ -48,9 +49,9 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 photoSelectedUri = activityResult.data?.data
-                binding?.let { fragmentDialogAddBinding ->
+                binding?.let { view ->
                     Glide.with(this).load(photoSelectedUri).diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop().into(fragmentDialogAddBinding.imgPackagePreview)
+                        .centerCrop().into(view.imgPackagePreview)
                 }
             }
         }
@@ -58,12 +59,22 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity?.let { activity ->
             binding = FragmentDialogAddBinding.inflate(LayoutInflater.from(context))
-            binding?.let { fragmentDialogAddBinding ->
+            binding?.let { view ->
+                addButton = view.btnAdd
+                cancelButton = view.btnCancel
+                TextWatchers.validateFieldsAsYouType(
+                    activity, addButton!!,
+                    view.etName,
+                    view.etDescription,
+                    view.etAvailables,
+                    view.etPrice,
+                    view.etSpeed,
+                    view.etLimit,
+                    view.etValidity
+                )
                 val builder =
                     MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.add_package))
-                        .setPositiveButton(getString(R.string.add), null)
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .setView(fragmentDialogAddBinding.root)
+                        .setView(view.root)
                 val dialog = builder.create()
                 dialog.setOnShowListener(this)
                 return dialog
@@ -76,51 +87,38 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         initPackage()
         configButtons()
         val dialog = dialog as? AlertDialog
-        dialog?.let { alertDialog ->
-            positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE)
-            negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE)
-            packageService?.let { positiveButton?.text = getString(R.string.update) }
-            positiveButton?.setOnClickListener {
-                binding?.let { fragmentDialogAddBinding ->
-                    enableUI(false)
+        dialog?.let {
+            packageService?.let {
+                addButton?.text = getString(R.string.update)
+                addButton?.setIconResource(R.drawable.ic_edit)
+            }
+            addButton?.setOnClickListener {
+                binding?.let { view ->
+                    enableAllInterface(false)
                     uploadReducedImage(packageService?.id, packageService?.imagePath) { eventPost ->
                         if (eventPost.isSuccess) {
                             if (packageService == null) {
                                 val packageService = PackageService(
-                                    name = fragmentDialogAddBinding.etName.text.toString().trim(),
-                                    description = fragmentDialogAddBinding.etDescription.text.toString()
-                                        .trim(),
-                                    available = fragmentDialogAddBinding.etAvailables.text.toString()
-                                        .trim().toInt(),
-                                    price = fragmentDialogAddBinding.etPrice.text.toString().trim()
-                                        .toInt(),
-                                    speed = fragmentDialogAddBinding.etSpeed.text.toString().trim()
-                                        .toInt(),
-                                    limit = fragmentDialogAddBinding.etLimit.text.toString().trim()
-                                        .toInt(),
-                                    validity = fragmentDialogAddBinding.etValidity.text.toString()
-                                        .toInt(),
+                                    name = view.etName.text.toString().trim(),
+                                    description = view.etDescription.text.toString().trim(),
+                                    available = view.etAvailables.text.toString().trim().toInt(),
+                                    price = view.etPrice.text.toString().trim().toInt(),
+                                    speed = view.etSpeed.text.toString().trim().toInt(),
+                                    limit = view.etLimit.text.toString().trim().toInt(),
+                                    validity = view.etValidity.text.toString().trim().toInt(),
                                     imagePath = eventPost.imagePath,
                                     administratorId = eventPost.administratorId
                                 )
                                 save(packageService, eventPost.documentId!!)
                             } else {
                                 packageService?.apply {
-                                    name = fragmentDialogAddBinding.etName.text.toString().trim()
-                                    description =
-                                        fragmentDialogAddBinding.etDescription.text.toString()
-                                            .trim()
-                                    available =
-                                        fragmentDialogAddBinding.etAvailables.text.toString()
-                                            .trim().toInt()
-                                    price = fragmentDialogAddBinding.etPrice.text.toString().trim()
-                                        .toInt()
-                                    speed = fragmentDialogAddBinding.etSpeed.text.toString().trim()
-                                        .toInt()
-                                    limit = fragmentDialogAddBinding.etLimit.text.toString().trim()
-                                        .toInt()
-                                    validity = fragmentDialogAddBinding.etValidity.text.toString()
-                                        .toInt()
+                                    name = view.etName.text.toString().trim()
+                                    description = view.etDescription.text.toString().trim()
+                                    available = view.etAvailables.text.toString().trim().toInt()
+                                    price = view.etPrice.text.toString().trim().toInt()
+                                    speed = view.etSpeed.text.toString().trim().toInt()
+                                    limit = view.etLimit.text.toString().trim().toInt()
+                                    validity = view.etValidity.text.toString().trim().toInt()
                                     imagePath = eventPost.imagePath
                                     update(this)
                                 }
@@ -129,7 +127,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     }
                 }
             }
-            negativeButton?.setOnClickListener {
+            cancelButton?.setOnClickListener {
                 dismiss()
             }
         }
@@ -143,25 +141,25 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private fun initPackage() {
         packageService = (activity as? MainAux)?.getPackageServiceSelected()
         packageService?.let { packageService ->
-            binding?.let { fragmentDialogAddBinding ->
+            binding?.let { view ->
                 dialog?.setTitle(getString(R.string.update_package))
-                fragmentDialogAddBinding.etName.setText(packageService.name)
-                fragmentDialogAddBinding.etDescription.setText(packageService.description)
-                fragmentDialogAddBinding.etAvailables.setText(packageService.available.toString())
-                fragmentDialogAddBinding.etPrice.setText(packageService.price.toString())
-                fragmentDialogAddBinding.etSpeed.setText(packageService.speed.toString())
-                fragmentDialogAddBinding.etLimit.setText(packageService.limit.toString())
-                fragmentDialogAddBinding.etValidity.setText(packageService.validity.toString())
+                view.etName.setText(packageService.name)
+                view.etDescription.setText(packageService.description)
+                view.etAvailables.setText(packageService.available.toString())
+                view.etPrice.setText(packageService.price.toString())
+                view.etSpeed.setText(packageService.speed.toString())
+                view.etLimit.setText(packageService.limit.toString())
+                view.etValidity.setText(packageService.validity.toString())
                 Glide.with(this).load(packageService.imagePath)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    .into(fragmentDialogAddBinding.imgPackagePreview)
+                    .into(view.imgPackagePreview)
             }
         }
     }
 
     private fun configButtons() {
-        binding?.let { fragmentDialogAddBinding ->
-            fragmentDialogAddBinding.ibPackageService.setOnClickListener {
+        binding?.let { view ->
+            view.ibPackageService.setOnClickListener {
                 openGallery()
             }
         }
@@ -222,7 +220,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     setText(getString(R.string.error_uploading_image))
                                     show()
                                 }
-                                enableUI(true)
+                                enableAllInterface(true)
                                 eventPost.isSuccess = false
                                 callback(eventPost)
                             }
@@ -262,22 +260,18 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
 
     private fun save(packageService: PackageService, documentId: String) {
         val db = FirebaseFirestore.getInstance()
-        db.collection(Constants.COLL_PACKAGE_SERVICE)
-            .document(documentId)
-            .set(packageService)
+        db.collection(Constants.COLL_PACKAGE_SERVICE).document(documentId).set(packageService)
             .addOnSuccessListener {
                 Toast.makeText(activity, getString(R.string.package_added), Toast.LENGTH_SHORT)
                     .show()
                 dismiss()
-            }
-            .addOnFailureListener {
+            }.addOnFailureListener {
                 errorSnack.apply {
                     setText(getString(R.string.failed_to_add_package))
                     show()
                 }
-                enableUI(true)
-            }
-            .addOnCompleteListener {
+                enableAllInterface(true)
+            }.addOnCompleteListener {
                 binding?.progressBar?.visibility = View.INVISIBLE
             }
     }
@@ -292,26 +286,24 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                         getString(R.string.package_updated),
                         Toast.LENGTH_SHORT
                     ).show()
-                }
-                .addOnFailureListener {
+                }.addOnFailureListener {
                     errorSnack.apply {
                         setText(getString(R.string.failed_to_update_package))
                         show()
                     }
-                }
-                .addOnCompleteListener {
-                    enableUI(true)
+                }.addOnCompleteListener {
+                    enableAllInterface(true)
                     binding?.progressBar?.visibility = View.INVISIBLE
                     dismiss()
                 }
         }
     }
 
-    private fun enableUI(enable: Boolean) {
-        positiveButton?.isEnabled = enable
-        negativeButton?.isEnabled = enable
-        binding?.let { fragmentDialogAddBinding ->
-            with(fragmentDialogAddBinding) {
+    private fun enableAllInterface(enable: Boolean) {
+        addButton?.isEnabled = enable
+        cancelButton?.isEnabled = enable
+        binding?.let { view ->
+            with(view) {
                 etName.isEnabled = enable
                 etDescription.isEnabled = enable
                 etAvailables.isEnabled = enable
@@ -319,8 +311,16 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 etSpeed.isEnabled = enable
                 etLimit.isEnabled = enable
                 etValidity.isEnabled = enable
-                progressBar.visibility = if (enable) View.INVISIBLE else View.VISIBLE
-                tvProgress.visibility = if (enable) View.INVISIBLE else View.VISIBLE
+                progressBar.visibility = if (enable) {
+                    View.INVISIBLE
+                } else {
+                    View.VISIBLE
+                }
+                tvProgress.visibility = if (enable) {
+                    View.INVISIBLE
+                } else {
+                    View.VISIBLE
+                }
             }
         }
     }

@@ -38,7 +38,7 @@
                 android:layout_marginTop="@dimen/common_padding_min"
                 android:text="@string/welcome_administrator"
                 android:textAlignment="center"
-                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
                 android:textColor="@color/blue_700" />
         </LinearLayout>
 

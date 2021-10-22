@@ -56,8 +56,11 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         val db = FirebaseFirestore.getInstance()
         db.collection(Constants.COLL_CONTRACTS_REQUESTED).document(requestedContract.id)
             .update(Constants.PROP_STATUS, requestedContract.status).addOnSuccessListener {
-                Toast.makeText(this, getString(R.string.updated_contract), Toast.LENGTH_SHORT)
-                    .show()
+                Toast.makeText(
+                    this,
+                    "${getString(R.string.contract)}: ${requestedContract.id} ${getString(R.string.updated)}.",
+                    Toast.LENGTH_SHORT
+                ).show()
                 notifyClient(requestedContract)
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO) {
                     val packagesServices = mutableListOf<Bundle>()

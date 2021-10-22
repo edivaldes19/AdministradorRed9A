@@ -36,7 +36,8 @@
     <string name="total_price">Precio total: $%1$d MXN</string>
     <string name="failed_to_query_the_data">Error al consultar los datos.</string>
     <string name="failed_to_update_contract">Error al actualizar el contrato.</string>
-    <string name="updated_contract">Contrato actualizado exitosamente.</string>
+    <string name="contract">Contrato</string>
+    <string name="updated">actualizado</string>
     <string name="contract_status_on_hold">En espera…</string>
     <string name="contract_status_activated">Activado</string>
     <string name="contract_status_timed_out">Caducado</string>
@@ -46,11 +47,11 @@
     <string name="failed_to_delete_image">Error al eliminar la imagen.</string>
     <string name="failed_to_remove_package">Error al eliminar el paquete.</string>
     <string name="offers_and_promotions">Ofertas y promociones</string>
-    <string name="main_topic">new_offer</string>
+    <string name="main_topic">new_offer_and_promotion</string>
     <string name="failed_to_log_out">Error al cerrar sesión.</string>
     <string name="see_you_soon">Nos vemos pronto.</string>
     <string name="error_code">Código de error</string>
-    <string name="uploading_image">Subiendo imagen…</string>
+    <string name="uploading_image">Subiendo imagen -></string>
     <string name="images_uploaded_successfully">Imágenes subidas correctamente.</string>
     <string name="image_upload_error">Error al subir la imagen.</string>
     <string name="welcome">Bienvenido</string>
@@ -69,4 +70,5 @@
     <string name="did_you_forget_your_password">¿Olvidaste tu contraseña?</string>
     <string name="you_do_not_have_an_account">¿No tienes cuenta?… Selecciona un método de autenticación para crear una.</string>
     <string name="login_google">Acceder con Google</string>
+    <string name="this_field_is_required">Este campo es obligatorio.</string>
 </resources>

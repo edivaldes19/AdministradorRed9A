@@ -26,18 +26,25 @@ import com.manuel.administradorred.utils.Constants
 
 class ChatFragment : Fragment(), OnChatListener {
     private var binding: FragmentChatBinding? = null
-    private lateinit var adapter: ChatAdapter
     private var requestedContract: RequestedContract? = null
+    private lateinit var adapter: ChatAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentChatBinding.inflate(inflater, container, false)
-        binding?.let { fragmentChatBinding ->
-            return fragmentChatBinding.root
+        binding?.let { view ->
+            return view.root
         }
         return super.onCreateView(inflater, container, savedInstanceState)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        getContract()
+        setupRecyclerView()
+        setupButtons()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -53,11 +60,7 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     override fun onDestroy() {
-        (activity as? AppCompatActivity)?.let { appCompatActivity ->
-            appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
-            appCompatActivity.supportActionBar?.title = getString(R.string.contract_requests)
-            setHasOptionsMenu(false)
-        }
+        setupActionBar(getString(R.string.contract_requests))
         super.onDestroy()
     }
 
@@ -67,10 +70,10 @@ class ChatFragment : Fragment(), OnChatListener {
             val messageRef =
                 database.getReference(Constants.PATH_CHATS).child(contract1.id).child(message.id)
             messageRef.removeValue { error, _ ->
-                binding?.let { fragmentChatBinding ->
+                binding?.let { view ->
                     if (error != null) {
                         Snackbar.make(
-                            fragmentChatBinding.root,
+                            view.root,
                             getString(R.string.error_clearing_message),
                             Snackbar.LENGTH_SHORT
                         ).setTextColor(Color.RED).show()
@@ -86,25 +89,18 @@ class ChatFragment : Fragment(), OnChatListener {
         }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        getContract()
-        setupRecyclerView()
-        setupButtons()
-    }
-
     private fun getContract() {
         requestedContract = (activity as? RequestedContractAux)?.getContractSelected()
         requestedContract?.let {
-            setupActionBar()
+            setupActionBar(getString(R.string.technical_support))
             setupRealtimeDatabase()
         }
     }
 
     private fun setupRealtimeDatabase() {
-        requestedContract?.let { it ->
+        requestedContract?.let { contract ->
             val database = Firebase.database
-            val chatRef = database.getReference(Constants.PATH_CHATS).child(it.id)
+            val chatRef = database.getReference(Constants.PATH_CHATS).child(contract.id)
             val childListener = object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     getMessage(snapshot)?.let { message ->
@@ -127,9 +123,9 @@ class ChatFragment : Fragment(), OnChatListener {
 
                 override fun onChildMoved(snapshot: DataSnapshot, previousChildName: String?) {}
                 override fun onCancelled(error: DatabaseError) {
-                    binding?.let { fragmentChatBinding ->
+                    binding?.let { view ->
                         Snackbar.make(
-                            fragmentChatBinding.root,
+                            view.root,
                             getString(R.string.error_loading_chat_messages),
                             Snackbar.LENGTH_SHORT
                         ).show()
@@ -166,7 +162,15 @@ class ChatFragment : Fragment(), OnChatListener {
     private fun setupButtons() {
         binding?.let { binding ->
             binding.fabSend.setOnClickListener {
-                sendMessage()
+                if (binding.etMessage.text.isNullOrEmpty()) {
+                    binding.tilMessage.run {
+                        error = getString(R.string.this_field_is_required)
+                        requestFocus()
+                    }
+                } else {
+                    binding.tilMessage.error = null
+                    sendMessage()
+                }
             }
         }
     }
@@ -184,7 +188,7 @@ class ChatFragment : Fragment(), OnChatListener {
                     )
                     binding.fabSend.isEnabled = false
                     chatRef.push().setValue(message).addOnSuccessListener {
-                        binding.etMessage.setText("")
+                        binding.etMessage.text = null
                     }.addOnCompleteListener {
                         binding.fabSend.isEnabled = true
                     }
@@ -193,10 +197,10 @@ class ChatFragment : Fragment(), OnChatListener {
         }
     }
 
-    private fun setupActionBar() {
+    private fun setupActionBar(title: String) {
         (activity as? AppCompatActivity)?.let { appCompatActivity ->
             appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            appCompatActivity.supportActionBar?.title = getString(R.string.technical_support)
+            appCompatActivity.supportActionBar?.title = title
             setHasOptionsMenu(true)
         }
     }

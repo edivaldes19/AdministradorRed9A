@@ -13,6 +13,104 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/common_padding_min">
 
+        <LinearLayout
+            android:id="@+id/llUserInformation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/tvId"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/imgProfilePicture"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_margin="@dimen/common_padding_min"
+                app:shapeAppearance="@style/ImageWithRoundedEdges" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvUserName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/common_padding_min"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    tools:text="Manuel Valdes" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/common_padding_min"
+                    android:layout_marginStart="@dimen/common_padding_min"
+                    android:textAlignment="textStart"
+                    tools:text="Hace x día(s)" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/common_padding_min"
+            android:text="@string/contract_id"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+            app:layout_constraintBottom_toTopOf="@id/tvProductNames"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/llUserInformation" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvProductNames"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintBottom_toTopOf="@id/llMessageAndPrice"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvId"
+            tools:text="Paquete MAX, Paquete Premium, Paquete Estándar" />
+
+        <LinearLayout
+            android:id="@+id/llMessageAndPrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            app:layout_constraintBottom_toTopOf="@id/tilStatus"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProductNames">
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chpChat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/common_padding_min"
+                android:text="@string/send_message"
+                android:textAlignment="center" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tvTotalPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/common_padding_min"
+                android:text="@string/total_price"
+                android:textAlignment="textEnd"
+                android:textAppearance="?attr/textAppearanceSubtitle1" />
+        </LinearLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilStatus"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
@@ -21,9 +119,9 @@
             android:layout_marginEnd="@dimen/common_padding_min"
             android:hint="@string/status"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/tvDate"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/chpChat">
+            app:layout_constraintTop_toBottomOf="@id/llMessageAndPrice">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/actvStatus"
@@ -31,63 +129,5 @@
                 android:layout_height="wrap_content"
                 android:inputType="none" />
         </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvId"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/contract_id"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            app:layout_constraintBottom_toTopOf="@id/tvProductNames"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvProductNames"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBody1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvId"
-            tools:text="Paquete MAX, Paquete Premium, Paquete Estándar" />
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chpChat"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/common_padding_min"
-            android:text="@string/send_message"
-            android:textAlignment="center"
-            app:layout_constraintBottom_toTopOf="@id/tilStatus"
-            app:layout_constraintEnd_toStartOf="@id/tvTotalPrice"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tvProductNames" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvTotalPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_padding_min"
-            android:text="@string/total_price"
-            android:textAlignment="textEnd"
-            android:textAppearance="?attr/textAppearanceSubtitle1"
-            app:layout_constraintBottom_toBottomOf="@id/chpChat"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toEndOf="@id/chpChat"
-            app:layout_constraintTop_toTopOf="@id/chpChat" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/tvDate"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/common_padding_min"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/tilStatus"
-            app:layout_constraintTop_toBottomOf="@id/tvTotalPrice"
-            tools:text="Hace x día(s)" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

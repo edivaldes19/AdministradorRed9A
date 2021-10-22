@@ -22,17 +22,19 @@ import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentOffersAndPromotionsBinding
 import com.manuel.administradorred.fcm.NotificationRS
+import com.manuel.administradorred.utils.TextWatchers
 import java.io.ByteArrayOutputStream
 
 class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentOffersAndPromotionsBinding? = null
-    private var positiveButton: MaterialButton? = null
-    private var negativeButton: MaterialButton? = null
+    private var addButton: MaterialButton? = null
+    private var cancelButton: MaterialButton? = null
     private var photoSelectedUri: Uri? = null
     private val errorSnack: Snackbar by lazy {
         Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
@@ -41,10 +43,9 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
             if (activityResult.resultCode == Activity.RESULT_OK) {
                 photoSelectedUri = activityResult.data?.data
-                binding?.let { fragmentOffersAndPromotionsBinding ->
+                binding?.let { view ->
                     Glide.with(this).load(photoSelectedUri).diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop()
-                        .into(fragmentOffersAndPromotionsBinding.imgPackageServicePreview)
+                        .centerCrop().into(view.imgPackageServicePreview)
                 }
             }
         }
@@ -52,12 +53,18 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         activity?.let { activity ->
             binding = FragmentOffersAndPromotionsBinding.inflate(LayoutInflater.from(context))
-            binding?.let { fragmentOffersAndPromotionsBinding ->
+            binding?.let { view ->
+                addButton = view.btnAdd
+                cancelButton = view.btnCancel
+                TextWatchers.validateFieldsAsYouType(
+                    activity,
+                    addButton!!,
+                    view.etTitle,
+                    view.etDescription
+                )
                 val builder =
-                    AlertDialog.Builder(activity).setTitle(getString(R.string.new_promotion))
-                        .setPositiveButton(getString(R.string.add), null)
-                        .setNegativeButton(getString(R.string.cancel), null)
-                        .setView(fragmentOffersAndPromotionsBinding.root)
+                    MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.new_promotion))
+                        .setView(view.root)
                 val dialog = builder.create()
                 dialog.setOnShowListener(this)
                 return dialog
@@ -69,16 +76,14 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     override fun onShow(dialogInterface: DialogInterface?) {
         configButtons()
         val dialog = dialog as? AlertDialog
-        dialog?.let { alertDialog ->
-            positiveButton = alertDialog.getButton(Dialog.BUTTON_POSITIVE) as MaterialButton?
-            negativeButton = alertDialog.getButton(Dialog.BUTTON_NEGATIVE) as MaterialButton?
-            positiveButton?.setOnClickListener {
+        dialog?.let {
+            addButton?.setOnClickListener {
                 binding?.let {
                     enableUI(false)
                     uploadReducedImage()
                 }
             }
-            negativeButton?.setOnClickListener {
+            cancelButton?.setOnClickListener {
                 dismiss()
             }
         }
@@ -90,8 +95,8 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     }
 
     private fun configButtons() {
-        binding?.let { fragmentOffersAndPromotionsBinding ->
-            fragmentOffersAndPromotionsBinding.ibPackageService.setOnClickListener {
+        binding?.let { view ->
+            view.ibPackageService.setOnClickListener {
                 openGallery()
             }
         }
@@ -112,7 +117,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                     val promoRef =
                         FirebaseStorage.getInstance().reference.child("offers_and_promotions")
-                            .child(binding.etTopic.text.toString().trim())
+                            .child(binding.tvTopic.text.toString().trim())
                     promoRef.putBytes(byteArrayOutputStream.toByteArray())
                         .addOnProgressListener { taskSnapshot ->
                             val progress =
@@ -134,7 +139,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                 notificationRS.sendNotificationByTopic(
                                     binding.etTitle.text.toString().trim(),
                                     binding.etDescription.text.toString().trim(),
-                                    binding.etTopic.text.toString().trim(),
+                                    binding.tvTopic.text.toString().trim(),
                                     downloadUrl.toString()
                                 ) { success ->
                                     if (success) {
@@ -194,13 +199,12 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     }
 
     private fun enableUI(enable: Boolean) {
-        positiveButton?.isEnabled = enable
-        negativeButton?.isEnabled = enable
-        binding?.let { fragmentOffersAndPromotionsBinding ->
-            with(fragmentOffersAndPromotionsBinding) {
+        addButton?.isEnabled = enable
+        cancelButton?.isEnabled = enable
+        binding?.let { view ->
+            with(view) {
                 etTitle.isEnabled = enable
                 etDescription.isEnabled = enable
-                etTopic.isEnabled = enable
             }
         }
     }

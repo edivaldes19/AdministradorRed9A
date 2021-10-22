@@ -6,9 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.google.firebase.firestore.FirebaseFirestore
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.ItemRequestedContractBinding
 import com.manuel.administradorred.models.RequestedContract
+import com.manuel.administradorred.utils.Constants
 import com.manuel.administradorred.utils.TimestampToText
 
 class RequestedContractAdapter(
@@ -35,8 +39,8 @@ class RequestedContractAdapter(
         holder.setListener(contract)
         holder.binding.tvId.text = context.getString(R.string.contract_id, contract.id)
         var names = ""
-        contract.packagesServices.forEach {
-            names += "${it.value.name}, "
+        contract.packagesServices.forEach { entry ->
+            names += "${entry.value.name}(${entry.value.available}), "
         }
         holder.binding.tvProductNames.text = names.dropLast(2)
         holder.binding.tvTotalPrice.text =
@@ -52,6 +56,17 @@ class RequestedContractAdapter(
         }
         val time = TimestampToText.getTimeAgo(contract.timestamp)
         holder.binding.tvDate.text = time
+        val db = FirebaseFirestore.getInstance()
+        db.collection(Constants.COLL_USERS).document(contract.userId).get()
+            .addOnSuccessListener { snapshot ->
+                holder.binding.tvUserName.text =
+                    snapshot.getString(Constants.PROP_USERNAME).toString()
+                Glide.with(context)
+                    .load(snapshot.getString(Constants.PROP_PROFILE_PICTURE).toString())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_error_outline)
+                    .centerCrop().circleCrop().into(holder.binding.imgProfilePicture)
+            }
     }
 
     override fun getItemCount(): Int = requestedContractList.size

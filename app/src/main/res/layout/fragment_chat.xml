@@ -27,6 +27,7 @@
         app:boxCornerRadiusBottomStart="@dimen/common_padding_max"
         app:boxCornerRadiusTopEnd="@dimen/common_padding_max"
         app:boxCornerRadiusTopStart="@dimen/common_padding_max"
+        app:counterMaxLength="100"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textCapSentences|textMultiLine"
+            android:maxLength="100"
             android:maxLines="3" />
     </com.google.android.material.textfield.TextInputLayout>
 

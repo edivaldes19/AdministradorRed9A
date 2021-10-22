@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Manuel/.gradle/caches/transforms-3/8ad8107a5e70afef8f7c07faf610955e/transformed/jetified-firebase-ui-auth-8.0.0/res/drawable/fui_ic_check_circle_black_128dp.xml" value="0.1925925925925926" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.1" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/background_chat_client.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/background_chat_support.xml" value="0.2703125" />
@@ -21,15 +22,15 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_contract.xml" value="0.6" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_main.xml" value="0.2" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_requested_contract.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_chat.xml" value="0.536" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_dialog_add.xml" value="0.264" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_offers_and_promotions.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_chat.xml" value="0.22314814814814815" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_dialog_add.xml" value="0.22314814814814815" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_offers_and_promotions.xml" value="0.22314814814814815" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_promo.xml" value="0.25416666666666665" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_chat.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_chat.xml" value="0.4" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_contract.xml" value="0.25025641025641027" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package.xml" value="0.4" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package_service.xml" value="0.1" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_requested_contract.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package_service.xml" value="0.15" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_requested_contract.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_service.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/view_login.xml" value="0.16" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/menu/menu_main.xml" value="0.264" />

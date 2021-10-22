@@ -26,8 +26,10 @@
                 android:id="@+id/etName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLength="50"
+                android:nextFocusForward="@id/etDescription"
                 tools:text="Paquete Premium de Otoño" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -45,8 +47,10 @@
                 android:id="@+id/etDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:imeOptions="actionNext"
                 android:inputType="textCapSentences|textMultiLine"
                 android:maxLength="100"
+                android:nextFocusForward="@id/etAvailables"
                 tools:text="Con este paquete aprovecha todas las ventajas de navegación durante el otoño." />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,8 +77,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
+                    android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLength="3"
+                    android:nextFocusForward="@id/etPrice"
                     tools:text="50" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -96,8 +102,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits=".0123456789"
+                    android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLength="4"
+                    android:nextFocusForward="@id/etSpeed"
                     tools:text="499" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -126,8 +134,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
+                    android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLength="4"
+                    android:nextFocusForward="@id/etLimit"
                     tools:text="30" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -148,8 +158,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
+                    android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLength="4"
+                    android:nextFocusForward="@id/etValidity"
                     tools:text="10" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -220,5 +232,37 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
             tools:text="Subiendo imagen... 50%" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                app:cornerRadius="@dimen/common_padding_max"
+                app:icon="@drawable/ic_cancel"
+                app:iconTint="@color/white" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/common_padding_min"
+                android:layout_weight="1"
+                android:enabled="false"
+                android:text="@string/add"
+                android:textAllCaps="false"
+                app:cornerRadius="@dimen/common_padding_max"
+                app:icon="@drawable/ic_check_circle"
+                tools:enabled="true" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

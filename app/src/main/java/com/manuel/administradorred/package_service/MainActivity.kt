@@ -9,6 +9,7 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -331,6 +332,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                     uploadImage(position + 1)
                 } else {
                     progressSnack.apply {
+                        setTextColor(Color.CYAN)
                         setText(getString(R.string.images_uploaded_successfully))
                         duration = Snackbar.LENGTH_SHORT
                         show()
@@ -338,6 +340,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 }
             }.addOnFailureListener {
                 progressSnack.apply {
+                    setTextColor(Color.RED)
                     setText("${getString(R.string.image_upload_error)} ${position + 1}")
                     duration = Snackbar.LENGTH_LONG
                     show()
@@ -353,19 +356,19 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 packageService.id?.let { id ->
                     packageService.imagePath?.let { url ->
                         try {
-                            val photoRef = FirebaseStorage.getInstance().getReferenceFromUrl(url)
-                            photoRef.delete().addOnSuccessListener {
-                                deletePackageServiceFromFirestore(id)
-                            }.addOnFailureListener { exception ->
-                                if ((exception as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND) {
-                                    deletePackageServiceFromFirestore(id)
-                                } else {
-                                    errorSnack.apply {
-                                        setText(getString(R.string.failed_to_delete_image))
-                                        show()
+                            val reference = FirebaseStorage.getInstance().getReferenceFromUrl(url)
+                            reference.delete()
+                                .addOnSuccessListener { deletePackageServiceFromFirestore(id) }
+                                .addOnFailureListener { exception ->
+                                    if ((exception as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                                        deletePackageServiceFromFirestore(id)
+                                    } else {
+                                        errorSnack.apply {
+                                            setText(getString(R.string.failed_to_delete_image))
+                                            show()
+                                        }
                                     }
                                 }
-                            }
                         } catch (e: Exception) {
                             e.printStackTrace()
                             deletePackageServiceFromFirestore(id)
@@ -388,10 +391,12 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
 
     private fun showNetworkErrorToast(connected: Boolean) {
         if (!connected) {
-            errorSnack.apply {
-                setText(getString(R.string.network_error))
-                show()
-            }
+            Toast.makeText(
+                this,
+                getString(R.string.network_error),
+                Toast.LENGTH_LONG
+            ).show()
+            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
         }
     }
 }
