@@ -14,7 +14,7 @@ import com.manuel.administradorred.databinding.ItemPackageServiceBinding
 import com.manuel.administradorred.models.PackageService
 
 class PackageServiceAdapter(
-    private val packageServiceList: MutableList<PackageService>,
+    private var packageServiceList: MutableList<PackageService>,
     private val listener: OnPackageServiceListener
 ) : RecyclerView.Adapter<PackageServiceAdapter.ViewHolder>() {
     private lateinit var context: Context
@@ -63,6 +63,12 @@ class PackageServiceAdapter(
             packageServiceList.removeAt(index)
             notifyItemRemoved(index)
         }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(list: MutableList<PackageService>) {
+        packageServiceList = list
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

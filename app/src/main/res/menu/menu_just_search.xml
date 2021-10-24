@@ -7,16 +7,4 @@
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
-    <item
-        android:id="@+id/action_contract_history"
-        android:title="@string/contract_requests"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_promo"
-        android:title="@string/offers_and_promotions"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_sign_out"
-        android:title="@string/sign_off"
-        app:showAsAction="never" />
 </menu>

@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.GridLayoutManager
 import com.firebase.ui.auth.AuthMethodPickerLayout
 import com.firebase.ui.auth.AuthUI
@@ -50,8 +51,9 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     private lateinit var authStateListener: FirebaseAuth.AuthStateListener
     private lateinit var packageServiceAdapter: PackageServiceAdapter
     private lateinit var listenerRegistration: ListenerRegistration
-    private var packageServiceSelected: PackageService? = null
     private lateinit var firebaseAnalytics: FirebaseAnalytics
+    private var packageServiceSelected: PackageService? = null
+    private var packageServiceList: MutableList<PackageService> = mutableListOf()
     private val errorSnack: Snackbar by lazy {
         Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
     }
@@ -79,7 +81,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                         param(FirebaseAnalytics.Param.SUCCESS, 200)
                         param(FirebaseAnalytics.Param.METHOD, Constants.PARAM_LOGIN)
                     }
-                    finish()
+                    finishAffinity()
                 } else {
                     response.error?.let { firebaseUiException ->
                         if (firebaseUiException.errorCode == ErrorCodes.NO_NETWORK) {
@@ -150,6 +152,30 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
+        val menuItem = menu?.findItem(R.id.action_search)
+        val searchView = menuItem?.actionView as SearchView
+        searchView.queryHint = getString(R.string.write_here_to_search)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                val temporaryList: MutableList<PackageService> = ArrayList()
+                for (packageService in packageServiceList) {
+                    if (newText!! in packageService.name.toString()) {
+                        temporaryList.add(packageService)
+                    }
+                }
+                packageServiceAdapter.updateList(temporaryList)
+                if (temporaryList.isNullOrEmpty()) {
+                    binding.tvWithoutResults.visibility = View.VISIBLE
+                } else {
+                    binding.tvWithoutResults.visibility = View.GONE
+                }
+                return false
+            }
+        })
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -289,7 +315,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     }
 
     private fun configRecyclerView() {
-        packageServiceAdapter = PackageServiceAdapter(mutableListOf(), this)
+        packageServiceAdapter = PackageServiceAdapter(packageServiceList, this)
         binding.recyclerView.apply {
             layoutManager = GridLayoutManager(
                 this@MainActivity, 3,

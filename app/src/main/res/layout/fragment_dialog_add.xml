@@ -233,6 +233,14 @@
             android:layout_marginTop="@dimen/common_padding_min"
             tools:text="Subiendo imagen... 50%" />
 
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/tvLastModification"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/common_padding_min"
+            android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
+            tools:text="@string/last_modification" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

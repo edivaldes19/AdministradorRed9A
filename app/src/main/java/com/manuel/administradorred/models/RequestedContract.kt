@@ -1,8 +1,6 @@
 package com.manuel.administradorred.models
 
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.ServerTimestamp
 
 data class RequestedContract(
     @get:Exclude var id: String = "",
@@ -10,8 +8,7 @@ data class RequestedContract(
     var packagesServices: Map<String, PackageServiceContract> = hashMapOf(),
     var totalPrice: Int = 0,
     var status: Int = 0,
-    var timestamp: Long = 0,
-    @ServerTimestamp var date: Timestamp? = null
+    var requested: Long = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

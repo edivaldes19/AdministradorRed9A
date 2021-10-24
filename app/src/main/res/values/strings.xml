@@ -71,4 +71,8 @@
     <string name="you_do_not_have_an_account">¿No tienes cuenta?… Selecciona un método de autenticación para crear una.</string>
     <string name="login_google">Acceder con Google</string>
     <string name="this_field_is_required">Este campo es obligatorio.</string>
+    <string name="search">Buscar</string>
+    <string name="write_here_to_search">Escribe aquí para buscar…</string>
+    <string name="without_results">Sin resultados.</string>
+    <string name="last_modification">Última modificación</string>
 </resources>

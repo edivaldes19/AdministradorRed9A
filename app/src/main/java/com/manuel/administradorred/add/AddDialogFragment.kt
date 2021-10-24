@@ -34,7 +34,9 @@ import com.manuel.administradorred.models.PackageService
 import com.manuel.administradorred.package_service.MainAux
 import com.manuel.administradorred.utils.Constants
 import com.manuel.administradorred.utils.TextWatchers
+import com.manuel.administradorred.utils.TimestampToText
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentDialogAddBinding? = null
@@ -107,7 +109,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     limit = view.etLimit.text.toString().trim().toInt(),
                                     validity = view.etValidity.text.toString().trim().toInt(),
                                     imagePath = eventPost.imagePath,
-                                    administratorId = eventPost.administratorId
+                                    administratorId = eventPost.administratorId,
+                                    lastModification = Date().time
                                 )
                                 save(packageService, eventPost.documentId!!)
                             } else {
@@ -120,6 +123,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     limit = view.etLimit.text.toString().trim().toInt()
                                     validity = view.etValidity.text.toString().trim().toInt()
                                     imagePath = eventPost.imagePath
+                                    lastModification = Date().time
                                     update(this)
                                 }
                             }
@@ -138,6 +142,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         binding = null
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initPackage() {
         packageService = (activity as? MainAux)?.getPackageServiceSelected()
         packageService?.let { packageService ->
@@ -150,6 +155,10 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 view.etSpeed.setText(packageService.speed.toString())
                 view.etLimit.setText(packageService.limit.toString())
                 view.etValidity.setText(packageService.validity.toString())
+                view.tvLastModification.text = "${getString(R.string.last_modification)}: ${
+                    TimestampToText.getTimeAgo(packageService.lastModification)
+                        .lowercase(Locale.getDefault())
+                }."
                 Glide.with(this).load(packageService.imagePath)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
                     .into(view.imgPackagePreview)
@@ -177,7 +186,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         callback: (EventPost) -> Unit
     ) {
         val eventPost = EventPost()
-        imageUrl?.let { eventPost.imagePath = it }
+        imageUrl?.let { path -> eventPost.imagePath = path }
         eventPost.documentId = packageServiceId ?: FirebaseFirestore.getInstance()
             .collection(Constants.COLL_PACKAGE_SERVICE).document().id
         FirebaseAuth.getInstance().currentUser?.let { user ->

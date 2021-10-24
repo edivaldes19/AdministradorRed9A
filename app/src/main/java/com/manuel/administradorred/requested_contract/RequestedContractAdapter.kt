@@ -1,5 +1,6 @@
 package com.manuel.administradorred.requested_contract
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +18,7 @@ import com.manuel.administradorred.utils.Constants
 import com.manuel.administradorred.utils.TimestampToText
 
 class RequestedContractAdapter(
-    private val requestedContractList: MutableList<RequestedContract>,
+    private var requestedContractList: MutableList<RequestedContract>,
     private val listenerRequested: OnRequestedContractListener
 ) : RecyclerView.Adapter<RequestedContractAdapter.ViewHolder>() {
     private lateinit var context: Context
@@ -56,7 +57,7 @@ class RequestedContractAdapter(
         } else {
             holder.binding.actvStatus.setText(context.getText(R.string.unknown), false)
         }
-        val time = TimestampToText.getTimeAgo(contract.timestamp)
+        val time = TimestampToText.getTimeAgo(contract.requested)
         holder.binding.tvDate.text = time
         val db = FirebaseFirestore.getInstance()
         db.collection(Constants.COLL_USERS).document(contract.userId).get()
@@ -73,8 +74,34 @@ class RequestedContractAdapter(
 
     override fun getItemCount(): Int = requestedContractList.size
     fun add(requestedContract: RequestedContract) {
-        requestedContractList.add(requestedContract)
-        notifyItemInserted(requestedContractList.size - 1)
+        if (!requestedContractList.contains(requestedContract)) {
+            requestedContractList.add(requestedContract)
+            notifyItemInserted(requestedContractList.size - 1)
+        } else {
+            update(requestedContract)
+        }
+    }
+
+    fun update(requestedContract: RequestedContract) {
+        val index = requestedContractList.indexOf(requestedContract)
+        if (index != -1) {
+            requestedContractList[index] = requestedContract
+            notifyItemChanged(index)
+        }
+    }
+
+    fun delete(requestedContract: RequestedContract) {
+        val index = requestedContractList.indexOf(requestedContract)
+        if (index != -1) {
+            requestedContractList.removeAt(index)
+            notifyItemRemoved(index)
+        }
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateList(list: MutableList<RequestedContract>) {
+        requestedContractList = list
+        notifyDataSetChanged()
     }
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

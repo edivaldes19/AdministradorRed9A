@@ -27,7 +27,7 @@ import com.manuel.administradorred.utils.Constants
 class ChatFragment : Fragment(), OnChatListener {
     private var binding: FragmentChatBinding? = null
     private var requestedContract: RequestedContract? = null
-    private lateinit var adapter: ChatAdapter
+    private lateinit var chatAdapter: ChatAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -108,20 +108,20 @@ class ChatFragment : Fragment(), OnChatListener {
             val childListener = object : ChildEventListener {
                 override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
                     getMessage(snapshot)?.let { message ->
-                        adapter.add(message)
-                        binding?.recyclerView?.scrollToPosition(adapter.itemCount - 1)
+                        chatAdapter.add(message)
+                        binding?.recyclerView?.scrollToPosition(chatAdapter.itemCount - 1)
                     }
                 }
 
                 override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
                     getMessage(snapshot)?.let { message ->
-                        adapter.update(message)
+                        chatAdapter.update(message)
                     }
                 }
 
                 override fun onChildRemoved(snapshot: DataSnapshot) {
                     getMessage(snapshot)?.let { message ->
-                        adapter.delete(message)
+                        chatAdapter.delete(message)
                     }
                 }
 
@@ -152,13 +152,13 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     private fun setupRecyclerView() {
-        adapter = ChatAdapter(mutableListOf(), this)
+        chatAdapter = ChatAdapter(mutableListOf(), this)
         binding?.let { it ->
             it.recyclerView.apply {
                 layoutManager = LinearLayoutManager(context).also { linearLayoutManager ->
                     linearLayoutManager.stackFromEnd = true
                 }
-                adapter = this@ChatFragment.adapter
+                adapter = this@ChatFragment.chatAdapter
             }
         }
     }

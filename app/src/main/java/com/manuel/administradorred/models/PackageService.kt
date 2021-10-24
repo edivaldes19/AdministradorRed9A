@@ -13,6 +13,7 @@ data class PackageService(
     var validity: Int = 0,
     var imagePath: String? = null,
     var administratorId: String = "",
+    var lastModification: Long = 0
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
