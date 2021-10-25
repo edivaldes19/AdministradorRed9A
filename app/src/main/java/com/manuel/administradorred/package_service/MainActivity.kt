@@ -36,6 +36,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
 import com.manuel.administradorred.R
+import com.manuel.administradorred.about.AboutActivity
 import com.manuel.administradorred.add.AddDialogFragment
 import com.manuel.administradorred.databinding.ActivityMainBinding
 import com.manuel.administradorred.models.PackageService
@@ -55,7 +56,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     private var packageServiceSelected: PackageService? = null
     private var packageServiceList: MutableList<PackageService> = mutableListOf()
     private val errorSnack: Snackbar by lazy {
-        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val authLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
@@ -181,6 +182,24 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_contract_requests -> startActivity(
+                Intent(
+                    this,
+                    RequestedContractActivity::class.java
+                )
+            )
+            R.id.action_promo -> {
+                OffersAndPromotionsFragment().show(
+                    supportFragmentManager,
+                    OffersAndPromotionsFragment::class.java.simpleName
+                )
+            }
+            R.id.action_about -> startActivity(
+                Intent(
+                    this,
+                    AboutActivity::class.java
+                )
+            )
             R.id.action_sign_out -> {
                 MaterialAlertDialogBuilder(this).setTitle(getString(R.string.sign_off))
                     .setMessage(getString(R.string.are_you_sure_to_take_this_action))
@@ -212,18 +231,6 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                             }
                         }
                     }.setNegativeButton(getString(R.string.cancel), null).show()
-            }
-            R.id.action_contract_history -> startActivity(
-                Intent(
-                    this,
-                    RequestedContractActivity::class.java
-                )
-            )
-            R.id.action_promo -> {
-                OffersAndPromotionsFragment().show(
-                    supportFragmentManager,
-                    OffersAndPromotionsFragment::class.java.simpleName
-                )
             }
         }
         return super.onOptionsItemSelected(item)

@@ -10,6 +10,7 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_add_package.xml" value="0.1" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin_big.xml" value="0.2703125" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin_medium.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_cloud_download.xml" value="0.1" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_email.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_error_outline.xml" value="0.2703125" />
@@ -20,6 +21,8 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_search.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_send.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/splash_screen.xml" value="0.14537037037037037" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_about.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_complaints_and_suggestions.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_contract.xml" value="0.6" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/activity_requested_contract.xml" value="0.25416666666666665" />
@@ -27,6 +30,8 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_dialog_add.xml" value="0.22314814814814815" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_offers_and_promotions.xml" value="0.22314814814814815" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_promo.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_send_an_e-mail.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/fragment_send_an_email.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_chat.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_contract.xml" value="0.25025641025641027" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package.xml" value="0.4" />
@@ -34,6 +39,8 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_requested_contract.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_service.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/view_login.xml" value="0.16" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/menu/menu_complaints_and_suggestions.xml" value="0.25416666666666665" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/menu/menu_contact.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/menu/menu_just_search.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/menu/menu_main.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.4" />

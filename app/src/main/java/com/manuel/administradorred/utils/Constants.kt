@@ -28,4 +28,6 @@ object Constants {
     const val PARAM_SIGN_OUT = "sign_out"
     const val TERMS_AND_CONDITIONS = "https://firebase.google.com/terms?authuser=0"
     const val PRIVACY_POLICY = "https://www.google.com/policies/privacy/?authuser=0"
+    const val EMAIL = "appsmanuel1219@gmail.com"
+    const val PASSWORD = "e12171922M/"
 }

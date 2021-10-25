@@ -37,7 +37,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     private var cancelButton: MaterialButton? = null
     private var photoSelectedUri: Uri? = null
     private val errorSnack: Snackbar by lazy {
-        Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+        Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
@@ -114,7 +114,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                 getBitmapFromUri(uri)?.let { bitmap ->
                     binding.progressBar.visibility = View.VISIBLE
                     val byteArrayOutputStream = ByteArrayOutputStream()
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                     val promoRef =
                         FirebaseStorage.getInstance().reference.child("offers_and_promotions")
                             .child(binding.tvTopic.text.toString().trim())
@@ -185,13 +185,13 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     private fun getResizedImage(image: Bitmap): Bitmap {
         var width = image.width
         var height = image.height
-        if (width <= 500 && height <= 500) return image
+        if (width <= 480 && height <= 480) return image
         val bitmapRatio = width.toFloat() / height.toFloat()
         if (bitmapRatio > 1) {
-            width = 500
+            width = 480
             height = (width / bitmapRatio).toInt()
         } else {
-            height = 500
+            height = 480
             width = (height / bitmapRatio).toInt()
         }
         return Bitmap.createScaledBitmap(image, width, height, true)

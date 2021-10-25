@@ -16,6 +16,13 @@
         android:theme="@style/Theme.AdministradorRed"
         tools:ignore="AllowBackup">
         <activity
+            android:name=".about.AboutActivity"
+            android:exported="false"
+            android:label="@string/about"
+            android:parentActivityName=".package_service.MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+        <activity
             android:name=".requested_contract.RequestedContractActivity"
             android:exported="false"
             android:label="@string/contract_requests"
@@ -30,8 +37,10 @@
             tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

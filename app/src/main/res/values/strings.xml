@@ -75,4 +75,25 @@
     <string name="write_here_to_search">Escribe aquí para buscar…</string>
     <string name="without_results">Sin resultados.</string>
     <string name="last_modification">Última modificación</string>
+    <string name="current_version">Versión: 1.0</string>
+    <string name="copyright">© Octubre - 2021</string>
+    <string name="developed_by">Desarrollado por</string>
+    <string name="eduardo">👨‍💻 Eduardo López Villegas</string>
+    <string name="antonio">👨‍💻 Jesús Antonio García Zamudio</string>
+    <string name="manuel">👨‍💻 Edgar Manuel Velázquez Valdes</string>
+    <string name="complaints_and_suggestions">Quejas y sugerencias</string>
+    <string name="about">Acerca de</string>
+    <string name="sending_email">Enviando correo electrónico…</string>
+    <string name="wait_a_moment_please" tools:ignore="Typos">Por favor, espere un momento…</string>
+    <string name="email_sent_successfully">Correo electrónico enviado con éxito.</string>
+    <string name="send">Enviar</string>
+    <string name="message">Mensaje</string>
+    <string name="email">Correo electrónico</string>
+    <string name="subject">Asunto</string>
+    <string name="complain">Queja</string>
+    <string name="suggestion">Sugerencia</string>
+    <string name="use_another_email">Utilizar otro correo electrónico</string>
+    <string name="post_comments">Enviar comentarios</string>
+    <string name="you_must_select_the_subject_type">Debe seleccionar el tipo de asunto.</string>
+    <string name="error_sending_email">Error al enviar correo electrónico.</string>
 </resources>

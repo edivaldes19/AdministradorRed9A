@@ -34,7 +34,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     private lateinit var listenerRegistration: ListenerRegistration
     private var requestedContractList: MutableList<RequestedContract> = mutableListOf()
     private val errorSnack: Snackbar by lazy {
-        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+        Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val aValues: Array<String> by lazy {
         resources.getStringArray(R.array.status_value)

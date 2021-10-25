@@ -8,12 +8,16 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="ifRoom|collapseActionView" />
     <item
-        android:id="@+id/action_contract_history"
+        android:id="@+id/action_contract_requests"
         android:title="@string/contract_requests"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_promo"
         android:title="@string/offers_and_promotions"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_about"
+        android:title="@string/about"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_sign_out"

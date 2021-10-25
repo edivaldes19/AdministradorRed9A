@@ -45,7 +45,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var packageService: PackageService? = null
     private var photoSelectedUri: Uri? = null
     private val errorSnack: Snackbar by lazy {
-        Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.RED)
+        Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { activityResult ->
@@ -202,7 +202,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     getBitmapFromUri(photoSelectedUri!!)?.let { bitmap ->
                         binding.progressBar.visibility = View.VISIBLE
                         val byteArrayOutputStream = ByteArrayOutputStream()
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 75, byteArrayOutputStream)
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                         photoRef.putBytes(byteArrayOutputStream.toByteArray())
                             .addOnProgressListener { taskSnapshot ->
                                 val progress =
@@ -255,13 +255,13 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private fun getResizedImage(image: Bitmap): Bitmap {
         var width = image.width
         var height = image.height
-        if (width <= 500 && height <= 500) return image
+        if (width <= 320 && height <= 320) return image
         val bitmapRatio = width.toFloat() / height.toFloat()
         if (bitmapRatio > 1) {
-            width = 500
+            width = 320
             height = (width / bitmapRatio).toInt()
         } else {
-            height = 500
+            height = 320
             width = (height / bitmapRatio).toInt()
         }
         return Bitmap.createScaledBitmap(image, width, height, true)
