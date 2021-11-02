@@ -76,7 +76,9 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     override fun onShow(dialogInterface: DialogInterface?) {
         configButtons()
         val dialog = dialog as? AlertDialog
-        dialog?.let {
+        dialog?.let { alertDialog ->
+            alertDialog.setCancelable(false)
+            alertDialog.setCanceledOnTouchOutside(false)
             addButton?.setOnClickListener {
                 binding?.let {
                     enableUI(false)
