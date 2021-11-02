@@ -48,12 +48,12 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         binding = ActivityRequestedContractBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupRecyclerView()
-        configAnalytics()
+        setupAnalytics()
     }
 
     override fun onResume() {
         super.onResume()
-        configFirestoreRealtime()
+        setupFirestoreInRealtime()
     }
 
     override fun onPause() {
@@ -65,14 +65,14 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         menuInflater.inflate(R.menu.menu_just_search, menu)
         val menuItem = menu?.findItem(R.id.action_search)
         val searchView = menuItem?.actionView as SearchView
-        searchView.queryHint = getString(R.string.write_here_to_search)
+        searchView.queryHint = getString(R.string.search_by_id)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val temporaryList: MutableList<RequestedContract> = ArrayList()
+                val temporaryList: MutableList<RequestedContract> = mutableListOf()
                 for (requestedContract in requestedContractList) {
                     if (newText!! in requestedContract.id) {
                         temporaryList.add(requestedContract)
@@ -135,7 +135,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         }
     }
 
-    private fun configFirestoreRealtime() {
+    private fun setupFirestoreInRealtime() {
         val db = FirebaseFirestore.getInstance()
         val requestedContractRef = db.collection(Constants.COLL_CONTRACTS_REQUESTED)
             .orderBy(Constants.PROP_REQUESTED, Query.Direction.DESCENDING)
@@ -159,7 +159,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         }
     }
 
-    private fun configAnalytics() {
+    private fun setupAnalytics() {
         firebaseAnalytics = Firebase.analytics
     }
 

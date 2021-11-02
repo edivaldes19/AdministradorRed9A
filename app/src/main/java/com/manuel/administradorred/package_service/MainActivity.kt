@@ -132,17 +132,17 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        configAuth()
-        configRecyclerView()
-        configButtons()
-        configAnalytics()
+        setupAuth()
+        setupRecyclerView()
+        setupButtons()
+        setupAnalytics()
         checkConnection()
     }
 
     override fun onResume() {
         super.onResume()
         firebaseAuth.addAuthStateListener(authStateListener)
-        configFirestoreRealtime()
+        setupFirestoreInRealtime()
     }
 
     override fun onPause() {
@@ -155,14 +155,14 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         menuInflater.inflate(R.menu.menu_main, menu)
         val menuItem = menu?.findItem(R.id.action_search)
         val searchView = menuItem?.actionView as SearchView
-        searchView.queryHint = getString(R.string.write_here_to_search)
+        searchView.queryHint = getString(R.string.search_by_name)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                val temporaryList: MutableList<PackageService> = ArrayList()
+                val temporaryList: MutableList<PackageService> = mutableListOf()
                 for (packageService in packageServiceList) {
                     if (newText!! in packageService.name.toString()) {
                         temporaryList.add(packageService)
@@ -264,7 +264,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         showNetworkErrorToast(isConnected)
     }
 
-    private fun configFirestoreRealtime() {
+    private fun setupFirestoreInRealtime() {
         val db = FirebaseFirestore.getInstance()
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
         listenerRegistration = packageServiceRef.addSnapshotListener { snapshots, error ->
@@ -293,7 +293,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         }
     }
 
-    private fun configAuth() {
+    private fun setupAuth() {
         firebaseAuth = FirebaseAuth.getInstance()
         authStateListener = FirebaseAuth.AuthStateListener { auth ->
             if (auth.currentUser != null) {
@@ -321,18 +321,16 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         }
     }
 
-    private fun configRecyclerView() {
+    private fun setupRecyclerView() {
         packageServiceAdapter = PackageServiceAdapter(packageServiceList, this)
         binding.recyclerView.apply {
-            layoutManager = GridLayoutManager(
-                this@MainActivity, 3,
-                GridLayoutManager.HORIZONTAL, false
-            )
+            layoutManager =
+                GridLayoutManager(this@MainActivity, 3, GridLayoutManager.HORIZONTAL, false)
             adapter = this@MainActivity.packageServiceAdapter
         }
     }
 
-    private fun configButtons() {
+    private fun setupButtons() {
         binding.efabNewPackageService.setOnClickListener {
             packageServiceSelected = null
             AddDialogFragment().show(
@@ -342,7 +340,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         }
     }
 
-    private fun configAnalytics() {
+    private fun setupAnalytics() {
         firebaseAnalytics = Firebase.analytics
     }
 

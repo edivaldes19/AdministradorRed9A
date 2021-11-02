@@ -11,6 +11,7 @@ object Constants {
     const val PROP_TOKEN = "token"
     const val PROP_USERNAME = "username"
     const val PROP_PROFILE_PICTURE = "profilePicture"
+    const val PROP_OFFERS_AND_PROMOTIONS = "offers_and_promotions"
     const val PROP_REQUESTED = "requested"
     const val PATH_PACKAGE_SERVICE_IMAGES = "package_service_images"
     const val PATH_CHATS = "Chats"

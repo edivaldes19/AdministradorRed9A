@@ -28,6 +28,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentOffersAndPromotionsBinding
 import com.manuel.administradorred.fcm.NotificationRS
+import com.manuel.administradorred.utils.Constants
 import com.manuel.administradorred.utils.TextWatchers
 import java.io.ByteArrayOutputStream
 
@@ -74,14 +75,14 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     }
 
     override fun onShow(dialogInterface: DialogInterface?) {
-        configButtons()
+        setupButtons()
         val dialog = dialog as? AlertDialog
         dialog?.let { alertDialog ->
             alertDialog.setCancelable(false)
             alertDialog.setCanceledOnTouchOutside(false)
             addButton?.setOnClickListener {
                 binding?.let {
-                    enableUI(false)
+                    enableAllInterface(false)
                     uploadReducedImage()
                 }
             }
@@ -96,7 +97,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         binding = null
     }
 
-    private fun configButtons() {
+    private fun setupButtons() {
         binding?.let { view ->
             view.ibPackageService.setOnClickListener {
                 openGallery()
@@ -118,7 +119,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                     val byteArrayOutputStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                     val promoRef =
-                        FirebaseStorage.getInstance().reference.child("offers_and_promotions")
+                        FirebaseStorage.getInstance().reference.child(Constants.PROP_OFFERS_AND_PROMOTIONS)
                             .child(binding.tvTopic.text.toString().trim())
                     promoRef.putBytes(byteArrayOutputStream.toByteArray())
                         .addOnProgressListener { taskSnapshot ->
@@ -156,7 +157,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                             show()
                                         }
                                     }
-                                    enableUI(true)
+                                    enableAllInterface(true)
                                 }
                             }
                         }.addOnFailureListener {
@@ -164,7 +165,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                 setText(getString(R.string.image_upload_error))
                                 show()
                             }
-                            enableUI(true)
+                            enableAllInterface(true)
                         }
                 }
             }
@@ -199,7 +200,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         return Bitmap.createScaledBitmap(image, width, height, true)
     }
 
-    private fun enableUI(enable: Boolean) {
+    private fun enableAllInterface(enable: Boolean) {
         addButton?.isEnabled = enable
         cancelButton?.isEnabled = enable
         binding?.let { view ->

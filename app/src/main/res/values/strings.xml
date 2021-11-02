@@ -72,7 +72,8 @@
     <string name="login_google">Acceder con Google</string>
     <string name="this_field_is_required">Este campo es obligatorio.</string>
     <string name="search">Buscar</string>
-    <string name="write_here_to_search">Escribe aquí para buscar…</string>
+    <string name="search_by_name">Buscar por nombre…</string>
+    <string name="search_by_id">Buscar por ID…</string>
     <string name="without_results">Sin resultados.</string>
     <string name="last_update">Última actualización</string>
     <string name="current_version">Versión: 1.0</string>
@@ -81,7 +82,6 @@
     <string name="eduardo">👨‍💻 Eduardo López Villegas</string>
     <string name="antonio">👨‍💻 Jesús Antonio García Zamudio</string>
     <string name="manuel">👨‍💻 Edgar Manuel Velázquez Valdes</string>
-    <string name="complaints_and_suggestions">Quejas y sugerencias</string>
     <string name="about">Acerca de</string>
     <string name="sending_email">Enviando correo electrónico…</string>
     <string name="wait_a_moment_please" tools:ignore="Typos">Por favor, espere un momento…</string>

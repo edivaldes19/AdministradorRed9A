@@ -38,7 +38,7 @@ class SendEmailFragment : DialogFragment(), DialogInterface.OnShowListener {
                     view.etMessage
                 )
                 val builder =
-                    MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.complaints_and_suggestions))
+                    MaterialAlertDialogBuilder(activity).setTitle(getString(R.string.post_comments))
                         .setView(view.root)
                 val dialog = builder.create()
                 dialog.setOnShowListener(this)

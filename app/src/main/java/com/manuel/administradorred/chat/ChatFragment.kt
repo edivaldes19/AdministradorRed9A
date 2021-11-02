@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.forEachIndexed
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -53,7 +54,9 @@ class ChatFragment : Fragment(), OnChatListener {
 
     override fun onPrepareOptionsMenu(menu: Menu) {
         super.onPrepareOptionsMenu(menu)
-        menu.findItem(R.id.action_search).isVisible = false
+        menu.forEachIndexed { _, item ->
+            item.isEnabled = false
+        }
     }
 
     override fun onDestroyView() {
@@ -155,8 +158,8 @@ class ChatFragment : Fragment(), OnChatListener {
 
     private fun setupRecyclerView() {
         chatAdapter = ChatAdapter(mutableListOf(), this)
-        binding?.let { it ->
-            it.recyclerView.apply {
+        binding?.let { view ->
+            view.recyclerView.apply {
                 layoutManager = LinearLayoutManager(context).also { linearLayoutManager ->
                     linearLayoutManager.stackFromEnd = true
                 }

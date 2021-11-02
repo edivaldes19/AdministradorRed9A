@@ -88,7 +88,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
 
     override fun onShow(dialogInterface: DialogInterface?) {
         initPackage()
-        configButtons()
+        setupButtons()
         val dialog = dialog as? AlertDialog
         dialog?.let { alertDialog ->
             alertDialog.setCancelable(false)
@@ -177,7 +177,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         }
     }
 
-    private fun configButtons() {
+    private fun setupButtons() {
         binding?.let { view ->
             view.ibPackageService.setOnClickListener {
                 openGallery()
