@@ -2,10 +2,7 @@ package com.manuel.administradorred.chat
 
 import android.graphics.Color
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -54,18 +51,23 @@ class ChatFragment : Fragment(), OnChatListener {
         return super.onOptionsItemSelected(item)
     }
 
+    override fun onPrepareOptionsMenu(menu: Menu) {
+        super.onPrepareOptionsMenu(menu)
+        menu.findItem(R.id.action_search).isVisible = false
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding = null
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         (activity as? AppCompatActivity)?.let { appCompatActivity ->
             appCompatActivity.supportActionBar?.setDisplayHomeAsUpEnabled(false)
             appCompatActivity.supportActionBar?.title = getString(R.string.contract_requests)
             setHasOptionsMenu(false)
         }
-        super.onDestroy()
     }
 
     override fun deleteMessage(message: Message) {
@@ -166,7 +168,7 @@ class ChatFragment : Fragment(), OnChatListener {
     private fun setupButtons() {
         binding?.let { binding ->
             binding.fabSend.setOnClickListener {
-                if (binding.etMessage.text.isNullOrEmpty()) {
+                if (binding.etMessage.text.toString().trim().isEmpty()) {
                     binding.tilMessage.run {
                         error = getString(R.string.this_field_is_required)
                         requestFocus()

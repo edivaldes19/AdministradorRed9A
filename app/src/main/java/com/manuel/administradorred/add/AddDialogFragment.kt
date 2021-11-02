@@ -53,7 +53,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 photoSelectedUri = activityResult.data?.data
                 binding?.let { view ->
                     Glide.with(this).load(photoSelectedUri).diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop().into(view.imgPackagePreview)
+                        .into(view.imgPackagePreview)
                 }
             }
         }
@@ -65,7 +65,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 addButton = view.btnAdd
                 cancelButton = view.btnCancel
                 TextWatchers.validateFieldsAsYouType(
-                    activity, addButton!!,
+                    activity,
+                    addButton!!,
                     view.etName,
                     view.etDescription,
                     view.etAvailables,
@@ -89,7 +90,9 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         initPackage()
         configButtons()
         val dialog = dialog as? AlertDialog
-        dialog?.let {
+        dialog?.let { alertDialog ->
+            alertDialog.setCancelable(false)
+            alertDialog.setCanceledOnTouchOutside(false)
             packageService?.let {
                 addButton?.text = getString(R.string.update)
                 addButton?.setIconResource(R.drawable.ic_edit)
@@ -99,32 +102,41 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     enableAllInterface(false)
                     uploadReducedImage(packageService?.id, packageService?.imagePath) { eventPost ->
                         if (eventPost.isSuccess) {
-                            if (packageService == null) {
-                                val packageService = PackageService(
-                                    name = view.etName.text.toString().trim(),
-                                    description = view.etDescription.text.toString().trim(),
-                                    available = view.etAvailables.text.toString().trim().toInt(),
-                                    price = view.etPrice.text.toString().trim().toInt(),
-                                    speed = view.etSpeed.text.toString().trim().toInt(),
-                                    limit = view.etLimit.text.toString().trim().toInt(),
-                                    validity = view.etValidity.text.toString().trim().toInt(),
-                                    imagePath = eventPost.imagePath,
-                                    administratorId = eventPost.administratorId,
-                                    lastModification = Date().time
-                                )
-                                save(packageService, eventPost.documentId!!)
+                            if (!theyAreEmpty()) {
+                                if (packageService == null) {
+                                    val packageService = PackageService(
+                                        name = view.etName.text.toString().trim(),
+                                        description = view.etDescription.text.toString().trim(),
+                                        available = view.etAvailables.text.toString().trim()
+                                            .toInt(),
+                                        price = view.etPrice.text.toString().trim().toInt(),
+                                        speed = view.etSpeed.text.toString().trim().toInt(),
+                                        limit = view.etLimit.text.toString().trim().toInt(),
+                                        validity = view.etValidity.text.toString().trim().toInt(),
+                                        imagePath = eventPost.imagePath,
+                                        administratorId = eventPost.administratorId,
+                                        lastModification = Date().time
+                                    )
+                                    save(packageService, eventPost.documentId!!)
+                                } else {
+                                    packageService?.apply {
+                                        name = view.etName.text.toString().trim()
+                                        description = view.etDescription.text.toString().trim()
+                                        available = view.etAvailables.text.toString().trim().toInt()
+                                        price = view.etPrice.text.toString().trim().toInt()
+                                        speed = view.etSpeed.text.toString().trim().toInt()
+                                        limit = view.etLimit.text.toString().trim().toInt()
+                                        validity = view.etValidity.text.toString().trim().toInt()
+                                        imagePath = eventPost.imagePath
+                                        lastModification = Date().time
+                                        update(this)
+                                    }
+                                }
                             } else {
-                                packageService?.apply {
-                                    name = view.etName.text.toString().trim()
-                                    description = view.etDescription.text.toString().trim()
-                                    available = view.etAvailables.text.toString().trim().toInt()
-                                    price = view.etPrice.text.toString().trim().toInt()
-                                    speed = view.etSpeed.text.toString().trim().toInt()
-                                    limit = view.etLimit.text.toString().trim().toInt()
-                                    validity = view.etValidity.text.toString().trim().toInt()
-                                    imagePath = eventPost.imagePath
-                                    lastModification = Date().time
-                                    update(this)
+                                enableAllInterface(true)
+                                errorSnack.apply {
+                                    setText(getString(R.string.there_are_still_empty_fields))
+                                    show()
                                 }
                             }
                         }
@@ -155,13 +167,12 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 view.etSpeed.setText(packageService.speed.toString())
                 view.etLimit.setText(packageService.limit.toString())
                 view.etValidity.setText(packageService.validity.toString())
-                view.tvLastModification.text = "${getString(R.string.last_modification)}: ${
+                view.tvLastModification.text = "${getString(R.string.last_update)}: ${
                     TimestampToText.getTimeAgo(packageService.lastModification)
                         .lowercase(Locale.getDefault())
                 }."
                 Glide.with(this).load(packageService.imagePath)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL).centerCrop()
-                    .into(view.imgPackagePreview)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL).into(view.imgPackagePreview)
             }
         }
     }
@@ -279,8 +290,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     setText(getString(R.string.failed_to_add_package))
                     show()
                 }
-                enableAllInterface(true)
             }.addOnCompleteListener {
+                enableAllInterface(true)
                 binding?.progressBar?.visibility = View.INVISIBLE
             }
     }
@@ -295,6 +306,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                         getString(R.string.package_updated),
                         Toast.LENGTH_SHORT
                     ).show()
+                    dismiss()
                 }.addOnFailureListener {
                     errorSnack.apply {
                         setText(getString(R.string.failed_to_update_package))
@@ -303,7 +315,6 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 }.addOnCompleteListener {
                     enableAllInterface(true)
                     binding?.progressBar?.visibility = View.INVISIBLE
-                    dismiss()
                 }
         }
     }
@@ -332,5 +343,17 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 }
             }
         }
+    }
+
+    private fun theyAreEmpty(): Boolean {
+        binding?.let { view ->
+            with(view) {
+                return etName.text.isNullOrEmpty() || etDescription.text.isNullOrEmpty() ||
+                        etAvailables.text.isNullOrEmpty() || etPrice.text.isNullOrEmpty() ||
+                        etSpeed.text.isNullOrEmpty() || etLimit.text.isNullOrEmpty() ||
+                        etValidity.text.isNullOrEmpty()
+            }
+        }
+        return false
     }
 }

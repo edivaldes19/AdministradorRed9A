@@ -68,7 +68,7 @@ class RequestedContractAdapter(
                     .load(snapshot.getString(Constants.PROP_PROFILE_PICTURE).toString())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_error_outline)
-                    .centerCrop().circleCrop().into(holder.binding.imgProfilePicture)
+                    .into(holder.binding.imgProfilePicture)
             }
     }
 

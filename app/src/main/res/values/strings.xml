@@ -74,7 +74,7 @@
     <string name="search">Buscar</string>
     <string name="write_here_to_search">Escribe aquí para buscar…</string>
     <string name="without_results">Sin resultados.</string>
-    <string name="last_modification">Última modificación</string>
+    <string name="last_update">Última actualización</string>
     <string name="current_version">Versión: 1.0</string>
     <string name="copyright">© Octubre - 2021</string>
     <string name="developed_by">Desarrollado por</string>
@@ -96,4 +96,5 @@
     <string name="post_comments">Enviar comentarios</string>
     <string name="you_must_select_the_subject_type">Debe seleccionar el tipo de asunto.</string>
     <string name="error_sending_email">Error al enviar correo electrónico.</string>
+    <string name="there_are_still_empty_fields">Aún hay campos vacíos.</string>
 </resources>

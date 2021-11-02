@@ -45,7 +45,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                 photoSelectedUri = activityResult.data?.data
                 binding?.let { view ->
                     Glide.with(this).load(photoSelectedUri).diskCacheStrategy(DiskCacheStrategy.ALL)
-                        .centerCrop().into(view.imgPackageServicePreview)
+                        .into(view.imgPackageServicePreview)
                 }
             }
         }

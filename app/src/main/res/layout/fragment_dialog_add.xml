@@ -70,7 +70,9 @@
                 android:layout_weight="1"
                 android:hint="@string/available"
                 app:counterEnabled="true"
-                app:counterMaxLength="3">
+                app:counterMaxLength="3"
+                app:helperText="10 - 100"
+                app:helperTextEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etAvailables"
@@ -78,10 +80,10 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="number"
                     android:maxLength="3"
                     android:nextFocusForward="@id/etPrice"
-                    tools:text="50" />
+                    tools:text="100" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -94,6 +96,8 @@
                 android:hint="@string/price"
                 app:counterEnabled="true"
                 app:counterMaxLength="4"
+                app:helperText="99 - 9999"
+                app:helperTextEnabled="true"
                 app:prefixText="$"
                 app:suffixText="MXN">
 
@@ -103,10 +107,10 @@
                     android:layout_height="wrap_content"
                     android:digits=".0123456789"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="number"
                     android:maxLength="4"
                     android:nextFocusForward="@id/etSpeed"
-                    tools:text="499" />
+                    tools:text="9999" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -127,6 +131,8 @@
                 android:hint="@string/speed"
                 app:counterEnabled="true"
                 app:counterMaxLength="4"
+                app:helperText="10 - 1000"
+                app:helperTextEnabled="true"
                 app:suffixText="Mbps">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -135,10 +141,10 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="number"
                     android:maxLength="4"
                     android:nextFocusForward="@id/etLimit"
-                    tools:text="30" />
+                    tools:text="1000" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -151,6 +157,8 @@
                 android:hint="@string/limit"
                 app:counterEnabled="true"
                 app:counterMaxLength="4"
+                app:helperText="5 - 1000"
+                app:helperTextEnabled="true"
                 app:suffixText="Gbps">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -159,10 +167,10 @@
                     android:layout_height="wrap_content"
                     android:digits="0123456789"
                     android:imeOptions="actionNext"
-                    android:inputType="phone"
+                    android:inputType="number"
                     android:maxLength="4"
                     android:nextFocusForward="@id/etValidity"
-                    tools:text="10" />
+                    tools:text="1000" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
 
@@ -175,6 +183,8 @@
             android:hint="@string/validity"
             app:counterEnabled="true"
             app:counterMaxLength="2"
+            app:helperText="1 - 12"
+            app:helperTextEnabled="true"
             app:suffixText="Meses">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -182,9 +192,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:digits="0123456789"
-                android:inputType="phone"
+                android:inputType="number"
                 android:maxLength="2"
-                tools:text="3" />
+                tools:text="12" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -239,7 +249,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2"
-            tools:text="@string/last_modification" />
+            tools:text="@string/last_update" />
 
         <LinearLayout
             android:layout_width="match_parent"

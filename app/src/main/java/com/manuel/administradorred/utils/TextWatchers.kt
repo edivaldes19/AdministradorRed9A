@@ -30,7 +30,7 @@ class TextWatchers {
                         before: Int,
                         count: Int
                     ) {
-                        if (text.text.toString().trim().isEmpty()) {
+                        if (s.isNullOrEmpty()) {
                             text.error = context.getString(R.string.this_field_is_required)
                             materialButton.isEnabled = false
                         } else {
@@ -40,7 +40,8 @@ class TextWatchers {
 
                     override fun afterTextChanged(s: Editable?) {
                         textInputEditText.forEach { editText ->
-                            materialButton.isEnabled = editText.text.toString().trim().isNotEmpty()
+                            materialButton.isEnabled =
+                                !s.isNullOrEmpty() && !editText.text.isNullOrEmpty()
                         }
                     }
                 })

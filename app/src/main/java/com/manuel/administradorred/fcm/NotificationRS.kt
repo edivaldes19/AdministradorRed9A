@@ -54,8 +54,11 @@ class NotificationRS {
         params.put(Constants.PARAM_TOKENS, "")
         params.put(Constants.PARAM_TOPIC, topic)
         params.put(Constants.PARAM_IMAGE, photoUrl)
-        val jsonObjectRequest: JsonObjectRequest = object : JsonObjectRequest(Method.POST,
-            Constants.ADMINISTRATOR_RED_RS, params, Response.Listener { response ->
+        val jsonObjectRequest: JsonObjectRequest = object : JsonObjectRequest(
+            Method.POST,
+            Constants.ADMINISTRATOR_RED_RS,
+            params,
+            Response.Listener { response ->
                 try {
                     val success = response.getInt(Constants.PARAM_SUCCESS)
                     if (success == 3) {
@@ -67,7 +70,8 @@ class NotificationRS {
                     e.printStackTrace()
                     callback(Constants.ERROR)
                 }
-            }, Response.ErrorListener { error ->
+            },
+            Response.ErrorListener { error ->
                 if (error.localizedMessage != null) {
                     callback(Constants.ERROR)
                 }
