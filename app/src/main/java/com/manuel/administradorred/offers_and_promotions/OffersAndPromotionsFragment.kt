@@ -12,7 +12,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
@@ -21,10 +20,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentOffersAndPromotionsBinding
 import com.manuel.administradorred.fcm.NotificationRS
@@ -34,10 +34,10 @@ import java.io.ByteArrayOutputStream
 
 class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentOffersAndPromotionsBinding? = null
-    private var addButton: MaterialButton? = null
-    private var cancelButton: MaterialButton? = null
+    private var fabAdd: FloatingActionButton? = null
+    private var fabCancel: FloatingActionButton? = null
     private var photoSelectedUri: Uri? = null
-    private val errorSnack: Snackbar by lazy {
+    private val snackBar: Snackbar by lazy {
         Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val resultLauncher =
@@ -55,11 +55,11 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         activity?.let { activity ->
             binding = FragmentOffersAndPromotionsBinding.inflate(LayoutInflater.from(context))
             binding?.let { view ->
-                addButton = view.btnAdd
-                cancelButton = view.btnCancel
+                fabAdd = view.fabAdd
+                fabCancel = view.fabCancel
                 TextWatchers.validateFieldsAsYouType(
                     activity,
-                    addButton!!,
+                    fabAdd!!,
                     view.etTitle,
                     view.etDescription
                 )
@@ -78,15 +78,14 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
         setupButtons()
         val dialog = dialog as? AlertDialog
         dialog?.let { alertDialog ->
-            alertDialog.setCancelable(false)
             alertDialog.setCanceledOnTouchOutside(false)
-            addButton?.setOnClickListener {
+            fabAdd?.setOnClickListener {
                 binding?.let {
                     enableAllInterface(false)
-                    uploadReducedImage()
+                    uploadCompressedImage()
                 }
             }
-            cancelButton?.setOnClickListener {
+            fabCancel?.setOnClickListener {
                 dismiss()
             }
         }
@@ -111,7 +110,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     }
 
     @SuppressLint("SetTextI18n")
-    private fun uploadReducedImage() {
+    private fun uploadCompressedImage() {
         photoSelectedUri?.let { uri ->
             binding?.let { binding ->
                 getBitmapFromUri(uri)?.let { bitmap ->
@@ -119,7 +118,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                     val byteArrayOutputStream = ByteArrayOutputStream()
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                     val promoRef =
-                        FirebaseStorage.getInstance().reference.child(Constants.PROP_OFFERS_AND_PROMOTIONS)
+                        Firebase.storage.reference.child(Constants.PROP_OFFERS_AND_PROMOTIONS)
                             .child(binding.tvTopic.text.toString().trim())
                     promoRef.putBytes(byteArrayOutputStream.toByteArray())
                         .addOnProgressListener { taskSnapshot ->
@@ -136,7 +135,6 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                             }
                         }.addOnSuccessListener { taskSnapshot ->
                             taskSnapshot.storage.downloadUrl.addOnSuccessListener { downloadUrl ->
-                                Log.i("URL", downloadUrl.toString())
                                 val notificationRS = NotificationRS()
                                 notificationRS.sendNotificationByTopic(
                                     binding.etTitle.text.toString().trim(),
@@ -152,7 +150,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                         ).show()
                                         dismiss()
                                     } else {
-                                        errorSnack.apply {
+                                        snackBar.apply {
                                             setText(getString(R.string.failed_to_send_the_promotion))
                                             show()
                                         }
@@ -161,7 +159,7 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
                                 }
                             }
                         }.addOnFailureListener {
-                            errorSnack.apply {
+                            snackBar.apply {
                                 setText(getString(R.string.image_upload_error))
                                 show()
                             }
@@ -201,8 +199,8 @@ class OffersAndPromotionsFragment : DialogFragment(), DialogInterface.OnShowList
     }
 
     private fun enableAllInterface(enable: Boolean) {
-        addButton?.isEnabled = enable
-        cancelButton?.isEnabled = enable
+        fabAdd?.isEnabled = enable
+        fabCancel?.isEnabled = enable
         binding?.let { view ->
             with(view) {
                 etTitle.isEnabled = enable

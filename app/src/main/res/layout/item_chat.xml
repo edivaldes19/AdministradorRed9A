@@ -15,5 +15,5 @@
         android:padding="@dimen/common_padding_min"
         android:textAppearance="?attr/textAppearanceBody1"
         android:textColor="?attr/colorOnPrimary"
-        tools:text="Emisor" />
+        tools:text="@string/hello" />
 </LinearLayout>

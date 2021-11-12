@@ -30,11 +30,11 @@ import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageException
+import com.google.firebase.storage.ktx.storage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.about.AboutActivity
 import com.manuel.administradorred.add.AddDialogFragment
@@ -45,7 +45,7 @@ import com.manuel.administradorred.requested_contract.RequestedContractActivity
 import com.manuel.administradorred.utils.ConnectionReceiver
 import com.manuel.administradorred.utils.Constants
 
-class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
+class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageServiceSelected,
     ConnectionReceiver.ReceiverListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var firebaseAuth: FirebaseAuth
@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
     private lateinit var listenerRegistration: ListenerRegistration
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private var packageServiceSelected: PackageService? = null
-    private var packageServiceList: MutableList<PackageService> = mutableListOf()
-    private val errorSnack: Snackbar by lazy {
+    private var packageServiceList = mutableListOf<PackageService>()
+    private val snackBar: Snackbar by lazy {
         Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val authLauncher =
@@ -86,12 +86,12 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 } else {
                     response.error?.let { firebaseUiException ->
                         if (firebaseUiException.errorCode == ErrorCodes.NO_NETWORK) {
-                            errorSnack.apply {
+                            snackBar.apply {
                                 setText("${getString(R.string.error_code)}: ${firebaseUiException.errorCode}")
                                 show()
                             }
                         } else {
-                            errorSnack.apply {
+                            snackBar.apply {
                                 setText(getString(R.string.network_error))
                                 show()
                             }
@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                         uriList.add(activityResult.data!!.clipData!!.getItemAt(i).uri)
                     }
                     if (count > 0) {
-                        uploadImage(0)
+                        uploadingImage(0)
                     }
                 }
             }
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         setupRecyclerView()
         setupButtons()
         setupAnalytics()
-        checkConnection()
+        checkInternetConnection()
     }
 
     override fun onResume() {
@@ -157,22 +157,19 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         val searchView = menuItem?.actionView as SearchView
         searchView.queryHint = getString(R.string.search_by_name)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
+            override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
-                val temporaryList: MutableList<PackageService> = mutableListOf()
+                val filteredList = mutableListOf<PackageService>()
                 for (packageService in packageServiceList) {
                     if (newText!! in packageService.name.toString()) {
-                        temporaryList.add(packageService)
+                        filteredList.add(packageService)
                     }
                 }
-                packageServiceAdapter.updateList(temporaryList)
-                if (temporaryList.isNullOrEmpty()) {
-                    binding.tvWithoutResults.visibility = View.VISIBLE
+                packageServiceAdapter.updateList(filteredList)
+                binding.tvWithoutResults.visibility = if (filteredList.isNullOrEmpty()) {
+                    View.VISIBLE
                 } else {
-                    binding.tvWithoutResults.visibility = View.GONE
+                    View.GONE
                 }
                 return false
             }
@@ -220,7 +217,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                                 binding.llProgress.visibility = View.VISIBLE
                                 binding.efabNewPackageService.hide()
                             } else {
-                                errorSnack.apply {
+                                snackBar.apply {
                                     setText(getString(R.string.failed_to_log_out))
                                     show()
                                 }
@@ -261,15 +258,45 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
 
     override fun getPackageServiceSelected(): PackageService? = packageServiceSelected
     override fun onNetworkChange(isConnected: Boolean) {
-        showNetworkErrorToast(isConnected)
+        showNetworkErrorSnackBar(isConnected)
+    }
+
+    private fun checkInternetConnection() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(Constants.ACTION_INTENT)
+        registerReceiver(ConnectionReceiver(), intentFilter)
+        ConnectionReceiver.receiverListener = this
+        val manager =
+            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = manager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
+        showNetworkErrorSnackBar(isConnected)
+    }
+
+    private fun showNetworkErrorSnackBar(isConnected: Boolean) {
+        if (isConnected) {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.you_have_connection),
+                Snackbar.LENGTH_SHORT
+            ).setTextColor(Color.GREEN).show()
+        } else {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.no_network_connection),
+                Snackbar.LENGTH_INDEFINITE
+            ).setTextColor(Color.WHITE)
+                .setAction(getString(R.string.go_to_settings)) { startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
+                .show()
+        }
     }
 
     private fun setupFirestoreInRealtime() {
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
         listenerRegistration = packageServiceRef.addSnapshotListener { snapshots, error ->
             if (error != null) {
-                errorSnack.apply {
+                snackBar.apply {
                     setText(getString(R.string.failed_to_query_the_data))
                     show()
                 }
@@ -279,15 +306,9 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 val packageService = snapshot.document.toObject(PackageService::class.java)
                 packageService.id = snapshot.document.id
                 when (snapshot.type) {
-                    DocumentChange.Type.ADDED -> {
-                        packageServiceAdapter.add(packageService)
-                    }
-                    DocumentChange.Type.MODIFIED -> {
-                        packageServiceAdapter.update(packageService)
-                    }
-                    DocumentChange.Type.REMOVED -> {
-                        packageServiceAdapter.delete(packageService)
-                    }
+                    DocumentChange.Type.ADDED -> packageServiceAdapter.add(packageService)
+                    DocumentChange.Type.MODIFIED -> packageServiceAdapter.update(packageService)
+                    DocumentChange.Type.REMOVED -> packageServiceAdapter.delete(packageService)
                 }
             }
         }
@@ -344,30 +365,18 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
         firebaseAnalytics = Firebase.analytics
     }
 
-    private fun checkConnection() {
-        val intentFilter = IntentFilter()
-        intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-        registerReceiver(ConnectionReceiver(), intentFilter)
-        ConnectionReceiver.receiverListener = this
-        val manager =
-            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val networkInfo = manager.activeNetworkInfo
-        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
-        showNetworkErrorToast(isConnected)
-    }
-
-    private fun uploadImage(position: Int) {
+    private fun uploadingImage(position: Int) {
         FirebaseAuth.getInstance().currentUser?.let { user ->
             progressSnack.apply {
                 setText("${getString(R.string.uploading_image)} ${position + 1} de $count...")
                 show()
             }
-            val packageServiceRef = FirebaseStorage.getInstance().reference.child(user.uid)
+            val packageServiceRef = Firebase.storage.reference.child(user.uid)
                 .child(Constants.PATH_PACKAGE_SERVICE_IMAGES).child(packageServiceSelected!!.id!!)
                 .child("image${position + 1}")
             packageServiceRef.putFile(uriList[position]).addOnSuccessListener {
                 if (position < count - 1) {
-                    uploadImage(position + 1)
+                    uploadingImage(position + 1)
                 } else {
                     progressSnack.apply {
                         setTextColor(Color.CYAN)
@@ -394,14 +403,14 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                 packageService.id?.let { id ->
                     packageService.imagePath?.let { url ->
                         try {
-                            val reference = FirebaseStorage.getInstance().getReferenceFromUrl(url)
+                            val reference = Firebase.storage.getReferenceFromUrl(url)
                             reference.delete()
-                                .addOnSuccessListener { deletePackageServiceFromFirestore(id) }
+                                .addOnSuccessListener { deletePackageServiceInFirestore(id) }
                                 .addOnFailureListener { exception ->
                                     if ((exception as StorageException).errorCode == StorageException.ERROR_OBJECT_NOT_FOUND) {
-                                        deletePackageServiceFromFirestore(id)
+                                        deletePackageServiceInFirestore(id)
                                     } else {
-                                        errorSnack.apply {
+                                        snackBar.apply {
                                             setText(getString(R.string.failed_to_delete_image))
                                             show()
                                         }
@@ -409,32 +418,21 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, MainAux,
                                 }
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            deletePackageServiceFromFirestore(id)
+                            deletePackageServiceInFirestore(id)
                         }
                     }
                 }
             }.setNegativeButton(getString(R.string.cancel), null).show()
     }
 
-    private fun deletePackageServiceFromFirestore(packageServiceId: String) {
-        val db = FirebaseFirestore.getInstance()
+    private fun deletePackageServiceInFirestore(packageServiceId: String) {
+        val db = Firebase.firestore
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
         packageServiceRef.document(packageServiceId).delete().addOnFailureListener {
-            errorSnack.apply {
+            snackBar.apply {
                 setText(getString(R.string.failed_to_remove_package))
                 show()
             }
-        }
-    }
-
-    private fun showNetworkErrorToast(connected: Boolean) {
-        if (!connected) {
-            Toast.makeText(
-                this,
-                getString(R.string.network_error),
-                Toast.LENGTH_LONG
-            ).show()
-            startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
         }
     }
 }

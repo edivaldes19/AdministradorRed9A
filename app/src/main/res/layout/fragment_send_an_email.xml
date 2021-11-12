@@ -101,33 +101,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/common_padding_min"
+            android:gravity="center"
             android:orientation="horizontal">
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnCancel"
-                android:layout_width="0dp"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabCancel"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_padding_min"
-                android:layout_weight="1"
-                android:text="@string/cancel"
-                android:textAllCaps="false"
-                app:cornerRadius="@dimen/common_padding_max"
-                app:icon="@drawable/ic_cancel"
-                app:iconTint="@color/white" />
+                android:layout_margin="@dimen/common_padding_default"
+                android:src="@drawable/ic_cancel"
+                app:tint="@color/white"
+                tools:ignore="ContentDescription" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnSendEmail"
-                android:layout_width="0dp"
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fabSendEmail"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/common_padding_min"
-                android:layout_weight="1"
+                android:layout_margin="@dimen/common_padding_default"
                 android:enabled="false"
-                android:text="@string/send"
-                android:textAllCaps="false"
-                app:cornerRadius="@dimen/common_padding_max"
-                app:icon="@drawable/ic_send"
-                app:iconTint="@color/white"
-                tools:enabled="false" />
+                android:src="@drawable/ic_send"
+                app:tint="@color/white"
+                tools:enabled="true"
+                tools:ignore="ContentDescription" />
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

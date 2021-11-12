@@ -21,17 +21,18 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.ktx.storage
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentDialogAddBinding
 import com.manuel.administradorred.models.EventPost
 import com.manuel.administradorred.models.PackageService
-import com.manuel.administradorred.package_service.MainAux
+import com.manuel.administradorred.package_service.OnPackageServiceSelected
 import com.manuel.administradorred.utils.Constants
 import com.manuel.administradorred.utils.TextWatchers
 import com.manuel.administradorred.utils.TimestampToText
@@ -40,11 +41,11 @@ import java.util.*
 
 class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     private var binding: FragmentDialogAddBinding? = null
-    private var addButton: MaterialButton? = null
-    private var cancelButton: MaterialButton? = null
+    private var fabAdd: FloatingActionButton? = null
+    private var fabCancel: FloatingActionButton? = null
     private var packageService: PackageService? = null
     private var photoSelectedUri: Uri? = null
-    private val errorSnack: Snackbar by lazy {
+    private val snackBar: Snackbar by lazy {
         Snackbar.make(binding!!.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val resultLauncher =
@@ -62,11 +63,11 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         activity?.let { activity ->
             binding = FragmentDialogAddBinding.inflate(LayoutInflater.from(context))
             binding?.let { view ->
-                addButton = view.btnAdd
-                cancelButton = view.btnCancel
+                fabAdd = view.fabAdd
+                fabCancel = view.fabCancel
                 TextWatchers.validateFieldsAsYouType(
                     activity,
-                    addButton!!,
+                    fabAdd!!,
                     view.etName,
                     view.etDescription,
                     view.etAvailables,
@@ -91,16 +92,17 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
         setupButtons()
         val dialog = dialog as? AlertDialog
         dialog?.let { alertDialog ->
-            alertDialog.setCancelable(false)
             alertDialog.setCanceledOnTouchOutside(false)
             packageService?.let {
-                addButton?.text = getString(R.string.update)
-                addButton?.setIconResource(R.drawable.ic_edit)
+                fabAdd?.setImageResource(R.drawable.ic_edit)
             }
-            addButton?.setOnClickListener {
+            fabAdd?.setOnClickListener {
                 binding?.let { view ->
                     enableAllInterface(false)
-                    uploadReducedImage(packageService?.id, packageService?.imagePath) { eventPost ->
+                    uploadCompressedImage(
+                        packageService?.id,
+                        packageService?.imagePath
+                    ) { eventPost ->
                         if (eventPost.isSuccess) {
                             if (!theyAreEmpty()) {
                                 if (packageService == null) {
@@ -134,7 +136,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                 }
                             } else {
                                 enableAllInterface(true)
-                                errorSnack.apply {
+                                snackBar.apply {
                                     setText(getString(R.string.there_are_still_empty_fields))
                                     show()
                                 }
@@ -143,7 +145,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     }
                 }
             }
-            cancelButton?.setOnClickListener {
+            fabCancel?.setOnClickListener {
                 dismiss()
             }
         }
@@ -156,7 +158,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
 
     @SuppressLint("SetTextI18n")
     private fun initPackage() {
-        packageService = (activity as? MainAux)?.getPackageServiceSelected()
+        packageService = (activity as? OnPackageServiceSelected)?.getPackageServiceSelected()
         packageService?.let { packageService ->
             binding?.let { view ->
                 dialog?.setTitle(getString(R.string.update_package))
@@ -191,17 +193,18 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun uploadReducedImage(
+    private fun uploadCompressedImage(
         packageServiceId: String?,
         imageUrl: String?,
         callback: (EventPost) -> Unit
     ) {
         val eventPost = EventPost()
         imageUrl?.let { path -> eventPost.imagePath = path }
-        eventPost.documentId = packageServiceId ?: FirebaseFirestore.getInstance()
-            .collection(Constants.COLL_PACKAGE_SERVICE).document().id
+        eventPost.documentId =
+            packageServiceId ?: Firebase.firestore.collection(Constants.COLL_PACKAGE_SERVICE)
+                .document().id
         FirebaseAuth.getInstance().currentUser?.let { user ->
-            val imagesRef = FirebaseStorage.getInstance().reference.child(user.uid)
+            val imagesRef = Firebase.storage.reference.child(user.uid)
                 .child(Constants.PATH_PACKAGE_SERVICE_IMAGES)
             val photoRef = imagesRef.child(eventPost.documentId!!).child("image0")
             eventPost.administratorId = user.uid
@@ -209,9 +212,9 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                 eventPost.isSuccess = true
                 callback(eventPost)
             } else {
-                binding?.let { binding ->
+                binding?.let { view ->
                     getBitmapFromUri(photoSelectedUri!!)?.let { bitmap ->
-                        binding.progressBar.visibility = View.VISIBLE
+                        view.progressBar.visibility = View.VISIBLE
                         val byteArrayOutputStream = ByteArrayOutputStream()
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 70, byteArrayOutputStream)
                         photoRef.putBytes(byteArrayOutputStream.toByteArray())
@@ -219,8 +222,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                 val progress =
                                     (100 * taskSnapshot.bytesTransferred / taskSnapshot.totalByteCount).toInt()
                                 taskSnapshot.run {
-                                    binding.progressBar.progress = progress
-                                    binding.tvProgress.text =
+                                    view.progressBar.progress = progress
+                                    view.tvProgress.text =
                                         "${getString(R.string.uploading_image)} ${
                                             String.format(
                                                 "%s%%",
@@ -236,7 +239,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                                     callback(eventPost)
                                 }
                             }.addOnFailureListener {
-                                errorSnack.apply {
+                                snackBar.apply {
                                     setText(getString(R.string.error_uploading_image))
                                     show()
                                 }
@@ -279,14 +282,14 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     }
 
     private fun save(packageService: PackageService, documentId: String) {
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         db.collection(Constants.COLL_PACKAGE_SERVICE).document(documentId).set(packageService)
             .addOnSuccessListener {
                 Toast.makeText(activity, getString(R.string.package_added), Toast.LENGTH_SHORT)
                     .show()
                 dismiss()
             }.addOnFailureListener {
-                errorSnack.apply {
+                snackBar.apply {
                     setText(getString(R.string.failed_to_add_package))
                     show()
                 }
@@ -297,7 +300,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     }
 
     private fun update(packageService: PackageService) {
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         packageService.id?.let { id ->
             db.collection(Constants.COLL_PACKAGE_SERVICE).document(id).set(packageService)
                 .addOnSuccessListener {
@@ -308,7 +311,7 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
                     ).show()
                     dismiss()
                 }.addOnFailureListener {
-                    errorSnack.apply {
+                    snackBar.apply {
                         setText(getString(R.string.failed_to_update_package))
                         show()
                     }
@@ -320,8 +323,8 @@ class AddDialogFragment : DialogFragment(), DialogInterface.OnShowListener {
     }
 
     private fun enableAllInterface(enable: Boolean) {
-        addButton?.isEnabled = enable
-        cancelButton?.isEnabled = enable
+        fabAdd?.isEnabled = enable
+        fabCancel?.isEnabled = enable
         binding?.let { view ->
             with(view) {
                 etName.isEnabled = enable

@@ -3,7 +3,7 @@ package com.manuel.administradorred.utils
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
 import com.manuel.administradorred.R
 
@@ -11,7 +11,7 @@ class TextWatchers {
     companion object {
         fun validateFieldsAsYouType(
             context: Context,
-            materialButton: MaterialButton,
+            floatingActionButton: FloatingActionButton,
             vararg textInputEditText: TextInputEditText
         ) {
             textInputEditText.forEach { text ->
@@ -32,7 +32,7 @@ class TextWatchers {
                     ) {
                         if (s.isNullOrEmpty()) {
                             text.error = context.getString(R.string.this_field_is_required)
-                            materialButton.isEnabled = false
+                            floatingActionButton.isEnabled = false
                         } else {
                             text.error = null
                         }
@@ -40,7 +40,7 @@ class TextWatchers {
 
                     override fun afterTextChanged(s: Editable?) {
                         textInputEditText.forEach { editText ->
-                            materialButton.isEnabled =
+                            floatingActionButton.isEnabled =
                                 !s.isNullOrEmpty() && !editText.text.isNullOrEmpty()
                         }
                     }

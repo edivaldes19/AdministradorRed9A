@@ -97,4 +97,8 @@
     <string name="you_must_select_the_subject_type">Debe seleccionar el tipo de asunto.</string>
     <string name="error_sending_email">Error al enviar correo electrónico.</string>
     <string name="there_are_still_empty_fields">Aún hay campos vacíos.</string>
+    <string name="you_have_connection">Tienes conexión.</string>
+    <string name="no_network_connection">Sin conexión de red.</string>
+    <string name="go_to_settings">Ir a configuración</string>
+    <string name="hello">Hola</string>
 </resources>

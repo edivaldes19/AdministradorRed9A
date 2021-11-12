@@ -53,7 +53,7 @@ class ChatAdapter(
         holder.binding.tvMessage.text = message.message
     }
 
-    override fun getItemCount(): Int = messageList.size
+    override fun getItemCount() = messageList.size
     fun add(message: Message) {
         if (!messageList.contains(message)) {
             messageList.add(message)

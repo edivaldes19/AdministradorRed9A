@@ -10,7 +10,8 @@ import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.ItemRequestedContractBinding
 import com.manuel.administradorred.models.RequestedContract
@@ -59,7 +60,7 @@ class RequestedContractAdapter(
         }
         val time = TimestampToText.getTimeAgo(contract.requested)
         holder.binding.tvDate.text = time
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         db.collection(Constants.COLL_USERS).document(contract.userId).get()
             .addOnSuccessListener { snapshot ->
                 holder.binding.tvUserName.text =
@@ -67,12 +68,12 @@ class RequestedContractAdapter(
                 Glide.with(context)
                     .load(snapshot.getString(Constants.PROP_PROFILE_PICTURE).toString())
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_error_outline)
+                    .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_broken_image)
                     .into(holder.binding.imgProfilePicture)
             }
     }
 
-    override fun getItemCount(): Int = requestedContractList.size
+    override fun getItemCount() = requestedContractList.size
     fun add(requestedContract: RequestedContract) {
         if (!requestedContractList.contains(requestedContract)) {
             requestedContractList.add(requestedContract)

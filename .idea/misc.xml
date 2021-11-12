@@ -11,6 +11,7 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin_big.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_admin_medium.xml" value="0.2703125" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_broken_image.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_cloud_download.xml" value="0.1" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_email.xml" value="0.2703125" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/drawable/ic_error_outline.xml" value="0.2703125" />
@@ -35,7 +36,7 @@
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_chat.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_contract.xml" value="0.25025641025641027" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package.xml" value="0.4" />
-        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package_service.xml" value="0.15" />
+        <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_package_service.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_requested_contract.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/item_service.xml" value="0.264" />
         <entry key="..\:/Users/Manuel/AndroidStudioProjects/AdministradorRed/app/src/main/res/layout/view_login.xml" value="0.16" />

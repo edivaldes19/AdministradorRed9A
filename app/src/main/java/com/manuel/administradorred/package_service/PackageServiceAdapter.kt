@@ -35,11 +35,11 @@ class PackageServiceAdapter(
         holder.binding.tvPrice.text = "$${packageService.price} MXN"
         holder.binding.tvSpeed.text = "${packageService.speed} Mbps"
         Glide.with(context).load(packageService.imagePath).diskCacheStrategy(DiskCacheStrategy.ALL)
-            .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_error_outline)
+            .placeholder(R.drawable.ic_cloud_download).error(R.drawable.ic_broken_image)
             .into(holder.binding.imgPackage)
     }
 
-    override fun getItemCount(): Int = packageServiceList.size
+    override fun getItemCount() = packageServiceList.size
     fun add(packageService: PackageService) {
         if (!packageServiceList.contains(packageService)) {
             packageServiceList.add(packageService)

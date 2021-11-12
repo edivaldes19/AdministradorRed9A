@@ -1,7 +1,12 @@
 package com.manuel.administradorred.requested_contract
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Color
+import android.net.ConnectivityManager
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.View
 import android.widget.Toast
@@ -13,27 +18,28 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.analytics.ktx.logEvent
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.manuel.administradorred.R
 import com.manuel.administradorred.chat.ChatFragment
 import com.manuel.administradorred.databinding.ActivityRequestedContractBinding
 import com.manuel.administradorred.fcm.NotificationRS
 import com.manuel.administradorred.models.RequestedContract
+import com.manuel.administradorred.utils.ConnectionReceiver
 import com.manuel.administradorred.utils.Constants
 import java.util.*
 
 class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListener,
-    RequestedContractAux {
+    OnRequestedContractSelected, ConnectionReceiver.ReceiverListener {
     private lateinit var binding: ActivityRequestedContractBinding
     private lateinit var contractAdapter: RequestedContractAdapter
     private lateinit var requestedContractSelected: RequestedContract
     private lateinit var firebaseAnalytics: FirebaseAnalytics
     private lateinit var listenerRegistration: ListenerRegistration
-    private var requestedContractList: MutableList<RequestedContract> = mutableListOf()
-    private val errorSnack: Snackbar by lazy {
+    private var requestedContractList = mutableListOf<RequestedContract>()
+    private val snackBar: Snackbar by lazy {
         Snackbar.make(binding.root, "", Snackbar.LENGTH_SHORT).setTextColor(Color.YELLOW)
     }
     private val aValues: Array<String> by lazy {
@@ -49,6 +55,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         setContentView(binding.root)
         setupRecyclerView()
         setupAnalytics()
+        checkInternetConnection()
     }
 
     override fun onResume() {
@@ -67,22 +74,19 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         val searchView = menuItem?.actionView as SearchView
         searchView.queryHint = getString(R.string.search_by_id)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
+            override fun onQueryTextSubmit(query: String?) = false
             override fun onQueryTextChange(newText: String?): Boolean {
-                val temporaryList: MutableList<RequestedContract> = mutableListOf()
+                val filteredList = mutableListOf<RequestedContract>()
                 for (requestedContract in requestedContractList) {
                     if (newText!! in requestedContract.id) {
-                        temporaryList.add(requestedContract)
+                        filteredList.add(requestedContract)
                     }
                 }
-                contractAdapter.updateList(temporaryList)
-                if (temporaryList.isNullOrEmpty()) {
-                    binding.tvWithoutResults.visibility = View.VISIBLE
+                contractAdapter.updateList(filteredList)
+                binding.tvWithoutResults.visibility = if (filteredList.isNullOrEmpty()) {
+                    View.VISIBLE
                 } else {
-                    binding.tvWithoutResults.visibility = View.GONE
+                    View.GONE
                 }
                 return false
             }
@@ -98,7 +102,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     }
 
     override fun onStatusChange(requestedContract: RequestedContract) {
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         db.collection(Constants.COLL_CONTRACTS_REQUESTED).document(requestedContract.id)
             .update(Constants.PROP_STATUS, requestedContract.status).addOnSuccessListener {
                 Toast.makeText(
@@ -111,7 +115,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
                     val packagesServices = mutableListOf<Bundle>()
                     requestedContract.packagesServices.forEach { entry ->
                         val bundle = Bundle()
-                        bundle.putString("id_package_service", entry.key)
+                        bundle.putString(Constants.PROP_ID_PACKAGE_SERVICE, entry.key)
                         packagesServices.add(bundle)
                     }
                     param(FirebaseAnalytics.Param.SHIPPING, packagesServices.toTypedArray())
@@ -119,14 +123,48 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
                 }
             }
             .addOnFailureListener {
-                errorSnack.apply {
+                snackBar.apply {
                     setText(getString(R.string.image_upload_error))
                     show()
                 }
             }
     }
 
-    override fun getContractSelected(): RequestedContract = requestedContractSelected
+    override fun getContractSelected() = requestedContractSelected
+    override fun onNetworkChange(isConnected: Boolean) {
+        showNetworkErrorSnackBar(isConnected)
+    }
+
+    private fun checkInternetConnection() {
+        val intentFilter = IntentFilter()
+        intentFilter.addAction(Constants.ACTION_INTENT)
+        registerReceiver(ConnectionReceiver(), intentFilter)
+        ConnectionReceiver.receiverListener = this
+        val manager =
+            applicationContext.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = manager.activeNetworkInfo
+        val isConnected = networkInfo != null && networkInfo.isConnectedOrConnecting
+        showNetworkErrorSnackBar(isConnected)
+    }
+
+    private fun showNetworkErrorSnackBar(isConnected: Boolean) {
+        if (isConnected) {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.you_have_connection),
+                Snackbar.LENGTH_SHORT
+            ).setTextColor(Color.GREEN).show()
+        } else {
+            Snackbar.make(
+                binding.root,
+                getString(R.string.no_network_connection),
+                Snackbar.LENGTH_INDEFINITE
+            ).setTextColor(Color.WHITE)
+                .setAction(getString(R.string.go_to_settings)) { startActivity(Intent(Settings.ACTION_WIFI_SETTINGS)) }
+                .show()
+        }
+    }
+
     private fun setupRecyclerView() {
         contractAdapter = RequestedContractAdapter(requestedContractList, this)
         binding.recyclerView.apply {
@@ -136,12 +174,12 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     }
 
     private fun setupFirestoreInRealtime() {
-        val db = FirebaseFirestore.getInstance()
-        val requestedContractRef = db.collection(Constants.COLL_CONTRACTS_REQUESTED)
+        val db = Firebase.firestore
+        val query = db.collection(Constants.COLL_CONTRACTS_REQUESTED)
             .orderBy(Constants.PROP_REQUESTED, Query.Direction.DESCENDING)
-        listenerRegistration = requestedContractRef.addSnapshotListener { snapshots, error ->
+        listenerRegistration = query.addSnapshotListener { snapshots, error ->
             if (error != null) {
-                errorSnack.apply {
+                snackBar.apply {
                     setText(getString(R.string.failed_to_query_the_data))
                     show()
                 }
@@ -164,7 +202,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     }
 
     private fun notifyClient(requestedContract: RequestedContract) {
-        val db = FirebaseFirestore.getInstance()
+        val db = Firebase.firestore
         db.collection(Constants.COLL_USERS).document(requestedContract.userId)
             .collection(Constants.COLL_TOKENS).get().addOnSuccessListener { snapshot ->
                 var tokensStr = ""
@@ -190,7 +228,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
                     )
                 }
             }.addOnFailureListener {
-                errorSnack.apply {
+                snackBar.apply {
                     setText(getString(R.string.failed_to_query_the_data))
                     show()
                 }

@@ -13,6 +13,7 @@ object Constants {
     const val PROP_PROFILE_PICTURE = "profilePicture"
     const val PROP_OFFERS_AND_PROMOTIONS = "offers_and_promotions"
     const val PROP_REQUESTED = "requested"
+    const val PROP_ID_PACKAGE_SERVICE = "id_package_service"
     const val PATH_PACKAGE_SERVICE_IMAGES = "package_service_images"
     const val PATH_CHATS = "Chats"
     const val SEND_NOTIFICATION = "sendNotification"
@@ -29,6 +30,7 @@ object Constants {
     const val PARAM_SIGN_OUT = "sign_out"
     const val TERMS_AND_CONDITIONS = "https://firebase.google.com/terms?authuser=0"
     const val PRIVACY_POLICY = "https://www.google.com/policies/privacy/?authuser=0"
+    const val ACTION_INTENT = "android.net.conn.CONNECTIVITY_CHANGE"
     const val EMAIL = "appsmanuel1219@gmail.com"
     const val PASSWORD = "e12171922M/"
 }

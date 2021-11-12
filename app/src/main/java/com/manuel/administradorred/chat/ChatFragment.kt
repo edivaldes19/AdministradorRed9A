@@ -19,7 +19,7 @@ import com.manuel.administradorred.R
 import com.manuel.administradorred.databinding.FragmentChatBinding
 import com.manuel.administradorred.models.Message
 import com.manuel.administradorred.models.RequestedContract
-import com.manuel.administradorred.requested_contract.RequestedContractAux
+import com.manuel.administradorred.requested_contract.OnRequestedContractSelected
 import com.manuel.administradorred.utils.Constants
 
 class ChatFragment : Fragment(), OnChatListener {
@@ -99,7 +99,7 @@ class ChatFragment : Fragment(), OnChatListener {
     }
 
     private fun getContract() {
-        requestedContract = (activity as? RequestedContractAux)?.getContractSelected()
+        requestedContract = (activity as? OnRequestedContractSelected)?.getContractSelected()
         requestedContract?.let {
             setupActionBar()
             setupRealtimeDatabase()
