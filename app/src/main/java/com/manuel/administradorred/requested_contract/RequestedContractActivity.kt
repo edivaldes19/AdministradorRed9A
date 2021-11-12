@@ -148,13 +148,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     }
 
     private fun showNetworkErrorSnackBar(isConnected: Boolean) {
-        if (isConnected) {
-            Snackbar.make(
-                binding.root,
-                getString(R.string.you_have_connection),
-                Snackbar.LENGTH_SHORT
-            ).setTextColor(Color.GREEN).show()
-        } else {
+        if (!isConnected) {
             Snackbar.make(
                 binding.root,
                 getString(R.string.no_network_connection),
