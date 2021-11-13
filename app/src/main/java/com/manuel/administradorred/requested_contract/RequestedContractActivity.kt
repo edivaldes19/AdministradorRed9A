@@ -110,7 +110,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
                     "${getString(R.string.contract)}: ${requestedContract.id} ${getString(R.string.updated)}.",
                     Toast.LENGTH_SHORT
                 ).show()
-                notifyClient(requestedContract)
+                notifyUser(requestedContract)
                 firebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_SHIPPING_INFO) {
                     val packagesServices = mutableListOf<Bundle>()
                     requestedContract.packagesServices.forEach { entry ->
@@ -131,10 +131,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
     }
 
     override fun getContractSelected() = requestedContractSelected
-    override fun onNetworkChange(isConnected: Boolean) {
-        showNetworkErrorSnackBar(isConnected)
-    }
-
+    override fun onNetworkChange(isConnected: Boolean) = showNetworkErrorSnackBar(isConnected)
     private fun checkInternetConnection() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Constants.ACTION_INTENT)
@@ -195,7 +192,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
         firebaseAnalytics = Firebase.analytics
     }
 
-    private fun notifyClient(requestedContract: RequestedContract) {
+    private fun notifyUser(requestedContract: RequestedContract) {
         val db = Firebase.firestore
         db.collection(Constants.COLL_USERS).document(requestedContract.userId)
             .collection(Constants.COLL_TOKENS).get().addOnSuccessListener { snapshot ->

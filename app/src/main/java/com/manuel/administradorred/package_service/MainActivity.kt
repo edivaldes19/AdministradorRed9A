@@ -121,7 +121,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
                         uriList.add(activityResult.data!!.clipData!!.getItemAt(i).uri)
                     }
                     if (count > 0) {
-                        uploadingImage(0)
+                        uploadingMultipleImages(0)
                     }
                 }
             }
@@ -256,11 +256,8 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
         }.show()
     }
 
-    override fun getPackageServiceSelected(): PackageService? = packageServiceSelected
-    override fun onNetworkChange(isConnected: Boolean) {
-        showNetworkErrorSnackBar(isConnected)
-    }
-
+    override fun getPackageServiceSelected() = packageServiceSelected
+    override fun onNetworkChange(isConnected: Boolean) = showNetworkErrorSnackBar(isConnected)
     private fun checkInternetConnection() {
         val intentFilter = IntentFilter()
         intentFilter.addAction(Constants.ACTION_INTENT)
@@ -359,7 +356,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
         firebaseAnalytics = Firebase.analytics
     }
 
-    private fun uploadingImage(position: Int) {
+    private fun uploadingMultipleImages(position: Int) {
         FirebaseAuth.getInstance().currentUser?.let { user ->
             progressSnack.apply {
                 setText("${getString(R.string.uploading_image)} ${position + 1} de $count...")
@@ -370,7 +367,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
                 .child("image${position + 1}")
             packageServiceRef.putFile(uriList[position]).addOnSuccessListener {
                 if (position < count - 1) {
-                    uploadingImage(position + 1)
+                    uploadingMultipleImages(position + 1)
                 } else {
                     progressSnack.apply {
                         setTextColor(Color.CYAN)
