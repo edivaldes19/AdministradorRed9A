@@ -78,7 +78,7 @@ class RequestedContractActivity : AppCompatActivity(), OnRequestedContractListen
             override fun onQueryTextChange(newText: String?): Boolean {
                 val filteredList = mutableListOf<RequestedContract>()
                 for (requestedContract in requestedContractList) {
-                    if (newText!! in requestedContract.id) {
+                    if (newText!!.lowercase() in requestedContract.id.lowercase()) {
                         filteredList.add(requestedContract)
                     }
                 }

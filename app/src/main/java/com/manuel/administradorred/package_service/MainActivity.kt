@@ -161,7 +161,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
             override fun onQueryTextChange(newText: String?): Boolean {
                 val filteredList = mutableListOf<PackageService>()
                 for (packageService in packageServiceList) {
-                    if (newText!! in packageService.name.toString()) {
+                    if (newText!!.lowercase() in packageService.name.toString().lowercase()) {
                         filteredList.add(packageService)
                     }
                 }
@@ -288,7 +288,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
     private fun setupFirestoreInRealtime() {
         val db = Firebase.firestore
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
-        listenerRegistration = packageServiceRef.addSnapshotListener { snapshots, error ->
+        listenerRegistration = packageServiceRef.addSnapshotListener { querySnapshot, error ->
             if (error != null) {
                 snackBar.apply {
                     setText(getString(R.string.failed_to_query_the_data))
@@ -296,10 +296,10 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
                 }
                 return@addSnapshotListener
             }
-            for (snapshot in snapshots!!.documentChanges) {
-                val packageService = snapshot.document.toObject(PackageService::class.java)
-                packageService.id = snapshot.document.id
-                when (snapshot.type) {
+            for (documentChange in querySnapshot!!.documentChanges) {
+                val packageService = documentChange.document.toObject(PackageService::class.java)
+                packageService.id = documentChange.document.id
+                when (documentChange.type) {
                     DocumentChange.Type.ADDED -> packageServiceAdapter.add(packageService)
                     DocumentChange.Type.MODIFIED -> packageServiceAdapter.update(packageService)
                     DocumentChange.Type.REMOVED -> packageServiceAdapter.delete(packageService)
@@ -391,8 +391,8 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
     }
 
     private fun confirmDeletePackageService(packageService: PackageService) {
-        MaterialAlertDialogBuilder(this).setTitle(getString(R.string.remove_package))
-            .setMessage(getString(R.string.are_you_sure_to_take_this_action))
+        MaterialAlertDialogBuilder(this).setTitle(getString(R.string.delete_package))
+            .setMessage(packageService.name)
             .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 packageService.id?.let { id ->
                     packageService.imagePath?.let { url ->
@@ -422,7 +422,13 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
     private fun deletePackageServiceInFirestore(packageServiceId: String) {
         val db = Firebase.firestore
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
-        packageServiceRef.document(packageServiceId).delete().addOnFailureListener {
+        packageServiceRef.document(packageServiceId).delete().addOnSuccessListener {
+            Toast.makeText(
+                this,
+                getString(R.string.package_removed),
+                Toast.LENGTH_SHORT
+            ).show()
+        }.addOnFailureListener {
             snackBar.apply {
                 setText(getString(R.string.failed_to_remove_package))
                 show()

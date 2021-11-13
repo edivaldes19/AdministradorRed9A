@@ -7,7 +7,7 @@
     <string name="add">Agregar</string>
     <string name="add_package">Agregar paquete</string>
     <string name="delete">Eliminar</string>
-    <string name="remove_package">Eliminar paquete</string>
+    <string name="delete_package">¿Eliminar paquete?</string>
     <string name="update">Actualizar</string>
     <string name="update_package">Actualizar paquete</string>
     <string name="are_you_sure_to_take_this_action">¿Está seguro de realizar esta acción?</string>
@@ -101,4 +101,5 @@
     <string name="no_network_connection">Sin conexión de red.</string>
     <string name="go_to_settings">Ir a configuración</string>
     <string name="hello">Hola</string>
+    <string name="package_removed">Paquete eliminado.</string>
 </resources>
