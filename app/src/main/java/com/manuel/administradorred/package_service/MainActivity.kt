@@ -191,16 +191,11 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
                     OffersAndPromotionsFragment::class.java.simpleName
                 )
             }
-            R.id.action_about -> startActivity(
-                Intent(
-                    this,
-                    AboutActivity::class.java
-                )
-            )
+            R.id.action_about -> startActivity(Intent(this, AboutActivity::class.java))
             R.id.action_sign_out -> {
                 MaterialAlertDialogBuilder(this).setTitle(getString(R.string.sign_off))
                     .setMessage(getString(R.string.are_you_sure_to_take_this_action))
-                    .setPositiveButton(getString(R.string.delete)) { _, _ ->
+                    .setPositiveButton(getString(R.string.sign_off)) { _, _ ->
                         AuthUI.getInstance().signOut(this).addOnSuccessListener {
                             Toast.makeText(
                                 this,
@@ -284,8 +279,8 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
 
     private fun setupFirestoreInRealtime() {
         val db = Firebase.firestore
-        val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
-        listenerRegistration = packageServiceRef.addSnapshotListener { querySnapshot, error ->
+        val reference = db.collection(Constants.COLL_PACKAGE_SERVICE)
+        listenerRegistration = reference.addSnapshotListener { querySnapshot, error ->
             if (error != null) {
                 snackBar.apply {
                     setText(getString(R.string.failed_to_query_the_data))
@@ -420,11 +415,7 @@ class MainActivity : AppCompatActivity(), OnPackageServiceListener, OnPackageSer
         val db = Firebase.firestore
         val packageServiceRef = db.collection(Constants.COLL_PACKAGE_SERVICE)
         packageServiceRef.document(packageServiceId).delete().addOnSuccessListener {
-            Toast.makeText(
-                this,
-                getString(R.string.package_removed),
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this, getString(R.string.package_removed), Toast.LENGTH_SHORT).show()
         }.addOnFailureListener {
             snackBar.apply {
                 setText(getString(R.string.failed_to_remove_package))
